@@ -92,7 +92,7 @@ class Home extends Component {
   )
 
   handlePress = (id, title, date, see_count, content) => {
-    console.log(1)
+    console.log(this.props)
     const { navigation } = this.props
     navigation.navigate('Detail', {
       id: id + '',
