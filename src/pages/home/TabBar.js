@@ -23,13 +23,10 @@ class TabBar extends Component {
                 onPress={() => goToPage(i)}
               >
                 <View style={styles.tabItem}>
-                  <Text style={{color: activeTab == i ? '#d81e06' : '#666'}}>
+                  <Text style={activeTab == i ? styles.tabItemActiveText : styles.tabItemText}>
                     {tabs[i]}
                   </Text>
                 </View>
-                {
-                  activeTab == i && <View style={styles.underline} />
-                }
               </TouchableOpacity>
             ))
           }
@@ -51,7 +48,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd'
   },
   tab: {
-    position: 'relative',
     width: '20%',
     justifyContent: 'center'
   },
@@ -59,14 +55,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center'
   },
-  underline: {
-    position: 'absolute',
-    left: '25%',
-    top: 34,
-    width: '50%',
-    height: 3,
-    backgroundColor: '#d81e06',
-    borderRadius: 2
+  tabItemText: {
+    color: '#666'
+  },
+  tabItemActiveText: {
+    color: '#d81e06',
+    fontWeight: '500'
   }
 })
 

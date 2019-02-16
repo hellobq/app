@@ -32,23 +32,24 @@ class Detail extends Component {
   }
 
   render () {
+
+    const { title, date } = this.props.navigation.state.params
     return (
       <ScrollView
         contentContainerStyle={{paddingBottom: 10}}
         showsVerticalScrollIndicator={false}
         style={styles.container}>
         <View>
-          <Text style={styles.header}>{ this.props.navigation.state.params.title }</Text>
+          <Text style={styles.header}>{ title }</Text>
           <View style={styles.currentInfo}>
-            <Text>阅读数 { this.props.navigation.state.params.see_count }</Text>
-            <Text>{ this.props.navigation.state.params.date }</Text>
+            <Text>{ date }</Text>
           </View>
         </View>
 
         <View>
           {
             this.state.content.map((item, idx) => (
-              <View style={styles.contentItem} key={item}>
+              <View style={styles.contentItem} key={item + idx}>
                 {
                   /^http/.test(item)
                     ? <Image style={styles.contentImage} source={{uri: item}}/>
