@@ -2,46 +2,44 @@ import { fromJS } from 'immutable'
 import { SET_LIST } from './actionTypes'
 
 const defaultState = fromJS({
-  dayNews: [],
+  listData: {
+    'daily-report': [],
+    'hot-report': [],
+    'hot-comment': [],
+    'yanjiu': []
+  },
+
   dayNewsPage: 1,
 
-  reports: [],
   reportsPage: 1,
 
-  comments: [],
   commentsPage: 1,
-  
-  stydies: [],
+
   stydiesPage: 1
 })
 
 export default (state = defaultState, action) => {
+  console.log(('这是上一次的数据', state.getIn(['listData', 'daily-report']).toJS()))
   switch (action.type) {
-
     // 修改每个列表
     case SET_LIST:
-      let list = fromJS(action.value)
       switch (action.listType) {
         case 'daily-report':
           return state.merge({
-            page: action.page,
-            dayNews: list
-          })
+            dayNewsPage: state.get('dayNewsPage') + 1
+          }).setIn(['listData', 'daily-report'], state.getIn(['listData', 'daily-report']).push(...action.value))
         case 'hot-report':
           return state.merge({
-            page: action.page,
-            reports: list
-          })
+            reportsPage: state.get('reportsPage') + 1
+          }).setIn(['listData', 'hot-report'], state.getIn(['listData', 'hot-report']).push(...action.value))
         case 'hot-comment':
           return state.merge({
-            page: action.page,
-            comments: list
-          })
+            commentsPage: state.get('commentsPage') + 1
+          }).setIn(['listData', 'hot-comment'], state.getIn(['listData', 'hot-comment']).push(...action.value))
         case 'yanjiu':
           return state.merge({
-            page: action.page,
-            stydies: list
-          })
+            stydiesPage: state.get('stydiesPage') + 1
+          }).setIn(['listData', 'yanjiu'], state.getIn(['listData', 'yanjiu']).push(...action.value))
       }
 
     default: 

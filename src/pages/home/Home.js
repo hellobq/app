@@ -13,51 +13,51 @@ import {
 import { connect } from 'react-redux'
 import Icon from 'react-native-vector-icons/Feather'
 import TabBar from './TabBar'
-import { handleNum } from '../../utils'
 import * as actionCreators from './actionCreators'
-import { SET_LIST } from './actionTypes'
 
 class Home extends Component {
   tabs = ['每日舆情', '舆情报告', '舆情热评', '舆情研究']
+  loading = true
+  num = 10
   tabTemps = ['daily-report', 'hot-report', 'hot-comment', 'yanjiu']
 
   state = {
-    loading: false,
-    activeTab: 0,
-    currentPage: 1,
-    page: 1,
-    num: 10
+    // 第几个栏目
+    activeTab: 0
   }
 
   componentDidMount () {
-    const {activeTab, page, num } = this.state
-    this.props.getList(this.tabTemps[activeTab], page, num)
+    const { getList, dayNewsPage } = this.props
+    const { activeTab } = this.state  
+    getList(this.tabTemps[activeTab], dayNewsPage, this.num)
   }
 
   render () {
     const { HomeContainer, tabStyle, search } = styles
-    const { loading } = this.state
-    const { dayNews, reports, comments, stydies } = this.props
+    const { listData } = this.props
 
     return (
       <View style={HomeContainer}>
         <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
-        <ScrollableTabView renderTabBar={props => <TabBar {...props}/>} >
+        <ScrollableTabView 
+          renderTabBar={props => <TabBar {...props}/>} 
+          onChangeTab={this.handleChangeTab}
+        >
           {
             this.tabs.map((tab, index) => (
               <View
-                style={loading && tabStyle}
+                style={this.loading && tabStyle}
                 tabLabel={tab}
                 key={tab}
               >
                 <FlatList
-                  data={index == 0 ? dayNews : (index === 1 ? reports : (index === 2 ? comments : stydies))}
+                  data={listData[this.tabTemps[index]]}
                   keyExtractor={this._keyExractor}
                   renderItem={this._renderItem}
                   ListEmptyComponent={this._listEmptyComponent}
                   ListFooterComponent={this._listFootComponent}
                   ItemSeparatorComponent={this._separatorComponent}
-                  onEndReached={() => this.handleEndReached(index)}
+                  onEndReached={this.handleEndReached}
                   onEndReachedThreshold={.02}
                 />
               </View>
@@ -71,31 +71,82 @@ class Home extends Component {
     )
   }
 
-  handleEndReached = (index) => {
-    console.log(`这是第${index}个列表`)
-    if (this.state.currentPage < this.state.maxPage) {
-      this.setState(state => ({
-        currentPage: state.currentPage + 1
-      }), () => {
-        this.getData()
-      })
+  handleChangeTab = ({from, i}) => {
+    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
+    console.log(dayNewsPage, reportsPage, commentsPage, stydiesPage)
+    let currentPage, column = this.tabTemps[i]
+    console.log(from, i)
+
+    this.setState(() => ({
+      activeTab: i
+    }), () => {
+      switch (i) {
+        case 0:
+          currentPage = dayNewsPage
+          break
+        case 1:
+          currentPage = reportsPage
+          break
+        case 2:
+          currentPage = commentsPage
+          break
+        case 3:
+          currentPage = stydiesPage
+          break
+      }
+
+      if (!listData[column].length) {
+        getList(column, currentPage, this.num)
+      }
+    })
+  }
+
+  handleEndReached = () => {
+    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
+    const { activeTab } = this.state
+    let currentPage, column = this.tabTemps[activeTab]
+    console.log('dayNewsPage -----------', dayNewsPage)
+
+    switch (activeTab) {
+      case 0:
+        currentPage = dayNewsPage
+        break
+      case 1:
+        currentPage = reportsPage
+        break
+      case 2:
+        currentPage = commentsPage
+        break
+      case 3:
+        currentPage = stydiesPage
+        break
     }
+
+    getList(column, currentPage, this.num)
   }
 
   _separatorComponent = () => (
-    <View style={styles.separator}/>
+    <View style={styles.separator} />
   )
 
   _listFootComponent = () => {
+    const { activeTab } = this.state
+    const { listData } = this.props
+
     return (
       <View style={styles.footer}>
-        <Fragment>
-          <ActivityIndicator
-            size="small"
-            color='#8590A6'
-          />
-          <Text style={styles.loadingText}>加载中...</Text>
-        </Fragment>
+      {
+        listData[this.tabTemps[activeTab]].length
+          ? <Fragment>
+              <ActivityIndicator
+                size="small"
+                color='#8590A6'
+              />
+              <Text style={styles.loadingText}>加载中...</Text>
+            </Fragment>
+          : <View />
+      }
+        
       </View>
     )
   }
@@ -221,19 +272,20 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapState = state => ({
-  dayNews: state.getIn(['home', 'dayNews']).toJS(),
-  dayNewsPage: state.getIn()['home', 'dayNewsPage'],
+const mapState = state => {
+  console.log(state.getIn(['home', 'listData']).toJS())
+  return {
+    listData: state.getIn(['home', 'listData']).toJS(),
 
-  reports: state.getIn(['home', 'reports']).toJS(),
-  reportsPage: state.getIn()['home', 'reportsPage'],
+    dayNewsPage: state.getIn(['home', 'dayNewsPage']),
   
-  comments: state.getIn(['home', 'comments']).toJS(),
-  commentsPage: state.getIn()['home', 'commentsPage'],
-  
-  stydies: state.getIn(['home', 'stydies']).toJS(),
-  stydiesPage: state.getIn()['home', 'stydiesPage']
-})
+    reportsPage: state.getIn(['home', 'reportsPage']),
+    
+    commentsPage: state.getIn(['home', 'commentsPage']),
+    
+    stydiesPage: state.getIn(['home', 'stydiesPage'])
+  }
+}
 
 const mapDispatch = dispatch => ({
   getList (type, page, num) {

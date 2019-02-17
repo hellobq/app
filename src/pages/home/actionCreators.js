@@ -8,7 +8,6 @@ export const getList = (type, page, num) => dispatch => {
       dispatch({
         type: SET_LIST,
         listType: type,
-        page,
         value: list
       })
     })
