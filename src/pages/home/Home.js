@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component } from 'react'
 import ScrollableTabView from 'react-native-scrollable-tab-view'
 import {
   StyleSheet,
@@ -17,27 +17,18 @@ import * as actionCreators from './actionCreators'
 
 class Home extends Component {
   tabs = ['每日舆情', '舆情报告', '舆情热评', '舆情研究']
-  loading = true
   num = 10
   tabTemps = ['daily-report', 'hot-report', 'hot-comment', 'yanjiu']
 
   state = {
-    // 第几个栏目
     activeTab: 0
   }
 
-  componentDidMount () {
-    const { getList, dayNewsPage } = this.props
-    const { activeTab } = this.state  
-    getList(this.tabTemps[activeTab], dayNewsPage, this.num)
-  }
-
   render () {
-    const { HomeContainer, tabStyle, search } = styles
     const { listData } = this.props
 
     return (
-      <View style={HomeContainer}>
+      <View style={styles.HomeContainer}>
         <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
         <ScrollableTabView 
           renderTabBar={props => <TabBar {...props}/>} 
@@ -46,7 +37,7 @@ class Home extends Component {
           {
             this.tabs.map((tab, index) => (
               <View
-                style={this.loading && tabStyle}
+                style={styles.tabStyle}
                 tabLabel={tab}
                 key={tab}
               >
@@ -54,7 +45,6 @@ class Home extends Component {
                   data={listData[this.tabTemps[index]]}
                   keyExtractor={this._keyExractor}
                   renderItem={this._renderItem}
-                  ListEmptyComponent={this._listEmptyComponent}
                   ListFooterComponent={this._listFootComponent}
                   ItemSeparatorComponent={this._separatorComponent}
                   onEndReached={this.handleEndReached}
@@ -64,65 +54,11 @@ class Home extends Component {
             ))
           }
         </ScrollableTabView>
-        <View style={search}>
+        <View style={styles.search}>
           <Icon name={'search'} size={24} color={'#333'} />
         </View>
       </View>
     )
-  }
-
-  handleChangeTab = ({from, i}) => {
-    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
-    console.log(dayNewsPage, reportsPage, commentsPage, stydiesPage)
-    let currentPage, column = this.tabTemps[i]
-    console.log(from, i)
-
-    this.setState(() => ({
-      activeTab: i
-    }), () => {
-      switch (i) {
-        case 0:
-          currentPage = dayNewsPage
-          break
-        case 1:
-          currentPage = reportsPage
-          break
-        case 2:
-          currentPage = commentsPage
-          break
-        case 3:
-          currentPage = stydiesPage
-          break
-      }
-
-      if (!listData[column].length) {
-        getList(column, currentPage, this.num)
-      }
-    })
-  }
-
-  handleEndReached = () => {
-    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
-    const { activeTab } = this.state
-    let currentPage, column = this.tabTemps[activeTab]
-    console.log('dayNewsPage -----------', dayNewsPage)
-
-    switch (activeTab) {
-      case 0:
-        currentPage = dayNewsPage
-        break
-      case 1:
-        currentPage = reportsPage
-        break
-      case 2:
-        currentPage = commentsPage
-        break
-      case 3:
-        currentPage = stydiesPage
-        break
-    }
-
-    getList(column, currentPage, this.num)
   }
 
   _separatorComponent = () => (
@@ -130,32 +66,22 @@ class Home extends Component {
   )
 
   _listFootComponent = () => {
-    const { activeTab } = this.state
-    const { listData } = this.props
-
     return (
       <View style={styles.footer}>
-      {
-        listData[this.tabTemps[activeTab]].length
-          ? <Fragment>
-              <ActivityIndicator
-                size="small"
-                color='#8590A6'
-              />
-              <Text style={styles.loadingText}>加载中...</Text>
-            </Fragment>
-          : <View />
-      }
-        
+        <ActivityIndicator
+          size="small"
+          color='#8590A6'
+        />
+        <Text style={styles.loadingText}>加载中...</Text>
       </View>
     )
   }
 
-  _renderItem = ({item: {_id, title, date, description, content, image}}) => {
+  _renderItem = ({item: {_id, title, date, content, description, image}}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={() => { this.handlePress(_id, title, date, content) }}
+        onPress={() => this.handlePress(_id, title, date, content)}
       >
         <View style={styles.item}>
           <View>
@@ -182,12 +108,63 @@ class Home extends Component {
 
   _keyExractor = ({title}, idx) => title + idx
 
-  _listEmptyComponent = () => (
-    <ActivityIndicator
-      size='small'
-      color='#333'
-    />
-  )
+  componentDidMount () {
+    const { getList, dayNewsPage } = this.props
+    const { activeTab } = this.state
+
+    getList(this.tabTemps[activeTab], dayNewsPage, this.num)
+  }
+
+  handleChangeTab = ({ i }) => {
+    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
+    let currentPage, column = this.tabTemps[i]
+
+    this.setState(() => ({
+      activeTab: i
+    }), () => {
+      switch (i) {
+        case 0:
+          currentPage = dayNewsPage
+          break
+        case 1:
+          currentPage = reportsPage
+          break
+        case 2:
+          currentPage = commentsPage
+          break
+        case 3:
+          currentPage = stydiesPage
+          break
+      }
+
+      if (!listData[column].length) {
+        getList(column, currentPage, this.num)
+      }
+    })
+  }
+
+  handleEndReached = () => {
+    const { getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
+    const { activeTab } = this.state
+    let currentPage, column = this.tabTemps[activeTab]
+
+    switch (activeTab) {
+      case 0:
+        currentPage = dayNewsPage
+        break
+      case 1:
+        currentPage = reportsPage
+        break
+      case 2:
+        currentPage = commentsPage
+        break
+      case 3:
+        currentPage = stydiesPage
+        break
+    }
+
+    getList(column, currentPage, this.num)
+  }
 
   handlePress = (id, title, date, content) => {
     const { navigation } = this.props
@@ -277,12 +254,10 @@ const mapState = state => {
   return {
     listData: state.getIn(['home', 'listData']).toJS(),
 
+    // 每类舆情的页码
     dayNewsPage: state.getIn(['home', 'dayNewsPage']),
-  
     reportsPage: state.getIn(['home', 'reportsPage']),
-    
     commentsPage: state.getIn(['home', 'commentsPage']),
-    
     stydiesPage: state.getIn(['home', 'stydiesPage'])
   }
 }

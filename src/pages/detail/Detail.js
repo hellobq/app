@@ -4,9 +4,12 @@ import {
   View,
   Text,
   Image,
-  ScrollView
+  ScrollView,
+  Dimensions
 } from 'react-native'
 import HeaderRight from './HeaderRight'
+
+const screenWidth = Dimensions.get('window').width
 
 class Detail extends Component {
 
@@ -32,8 +35,8 @@ class Detail extends Component {
   }
 
   render () {
-
     const { title, date } = this.props.navigation.state.params
+    console.log(this.state.content)
     return (
       <ScrollView
         contentContainerStyle={{paddingBottom: 10}}
@@ -52,9 +55,20 @@ class Detail extends Component {
               <View style={styles.contentItem} key={item + idx}>
                 {
                   /^http/.test(item)
-                    ? <Image style={styles.contentImage} source={{uri: item}}/>
+                  ? <Image
+                      style={{
+                        width: '100%', 
+                        height: 120
+                      }}
+                      source={{uri: item}}
+                      resizeMode='contain'
+                    />
                     : <View>
-                        <Text style={styles.contentFont}>{ item }</Text>
+                        {
+                          /strong/.test(item) 
+                            ? <Text style={styles.strongContentFont}>{ item.replace(/<strong>|<\/strong>/g, '') }</Text>
+                            : <Text style={styles.contentFont}>{ item }</Text>
+                        }
                       </View>
                 }
               </View>
@@ -66,15 +80,18 @@ class Detail extends Component {
   }
 
   handleContent = contentStr => {
-    let content_temp = []
-    contentStr.replace(/((?<==")[^"]+)|((?<=<p>)[^<]+)/g, str => {
-      this.setState(({content}) => {
-        content_temp = [...content]
-        content_temp.push(str)
-        return {
-          content: content_temp
+    contentStr.replace(/((?<=src=")[^"]+)|(?<=<p>).+?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
+      if (!/鹰眼舆情观察室|蚁坊软件|\(|更多舆情热点请关注|&nbsp;/.test(str)) {
+        if (/img/.test(str)) {
+          str = str.match(/(?<=src=")[^"]+/g)[0]
         }
-      })
+
+        this.setState(({content}) => {
+          return {
+            content: [...content, str]
+          }
+        })
+      }
     })
   }
 }
@@ -104,10 +121,19 @@ const styles = StyleSheet.create({
   },
   contentImage: {
     width: '100%',
-    height: 100
+    height: 200
   },
   contentFont: {
-    lineHeight: 24
+    fontSize: 16,
+    letterSpacing: 1,
+    lineHeight: 24,
+    color: '#4f4f4f'
+  },
+  strongContentFont: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: 'bold',
+    color: '#333'
   }
 })
 

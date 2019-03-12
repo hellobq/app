@@ -4,11 +4,11 @@ import { FETCH_LIST, SET_LIST } from './actionTypes'
 export const getList = (type, page, num) => dispatch => {
   fetch(`http://192.168.199.166:4321/api/list?type=${type}&page=${page}&num=${num}`)
     .then(res => res.json())
-    .then(list => {
+    .then(({success, data}) => {
       dispatch({
         type: SET_LIST,
         listType: type,
-        value: list
+        value: data
       })
     })
     .catch(() => {
