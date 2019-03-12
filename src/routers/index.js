@@ -2,7 +2,11 @@ const routers = require('koa-router')()
 const getList = require('../controllers/getList')
 const connect = require('../db/connect')
 
-connect()
-routers.get('/api/list', getList)
+const connectRouter = async () => {
+  await connect()
+  routers.get('/api/list', getList)
+}
+
+connectRouter()
 
 module.exports = routers

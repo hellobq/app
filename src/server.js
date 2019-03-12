@@ -8,8 +8,9 @@ app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Methods', 'PUT,DELETE,POST,GET');
   await next()
 })
+
 app.use(routers.routes(), routers.allowedMethods())
 
 app.listen(port, () => {
-  console.log(`server start at localhost:${port}`)
+  console.log(`server start at localhost:${ port }`)
 })
