@@ -35,11 +35,13 @@ class Detail extends Component {
 
   componentDidMount () {
     const { content } = this.props.navigation.state.params
+    console.log(content)
     this.handleContent(content)
   }
 
   render () {
     const { title, date } = this.props.navigation.state.params
+    // console.log(this.state.content)
     return (
       <Fragment>
         <ScrollView
@@ -48,12 +50,9 @@ class Detail extends Component {
           style={styles.container}>
           <View>
             <Text style={styles.header}>{ title }</Text>
-            <View style={styles.currentInfo}>
-              <Text>{ date }</Text>
-            </View>
           </View>
 
-          <View>
+          <View style={styles.content}>
             {
               this.state.content.map((item, idx) => (
                 <View style={styles.contentItem} key={item + idx}>
@@ -65,7 +64,8 @@ class Detail extends Component {
                       >
                         <Image
                           style={{
-                            width: '100%', 
+                            marginHorizontal: 6,
+                            width: '90%', 
                             height: 200
                           }}
                           source={{uri: item}}
@@ -105,44 +105,51 @@ class Detail extends Component {
   }
 
   handleImageViewerClick = () => {
-    this.setState(({visible}) => ({
+    this.setState(() => ({
       visible: false
     }))
   }
 
   handleImageClick = (uri) => {
-    this.setState(({visible, startIndex}) => ({
+    this.setState(() => ({
       visible: true,
       startIndex: this.images.findIndex(({url}) => url === uri)
     }))
   }
 
   handleContent = contentStr => {
-    contentStr.replace(/((?<=src=")[^"]+)|(?<=<p>).+?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
-      if (!/鹰眼舆情观察室|蚁坊软件|\(|更多舆情热点请关注|&nbsp;/.test(str)) {
-        /^http/.test(str) && this.images.push({url: str})
+    contentStr
+      .replace(/\s+/g, '')
+      .replace(/((?<=src=")[^"]+)|(?<=<p>).*?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
+        if (str &&!/鹰眼舆情观察室|更多舆情热点请关注|蚁坊软件|\(|（|<\/?br>/.test(str)) {
 
-        if (/img/.test(str)) {
-          str = str.match(/(?<=src=")[^"]+/g)[0]
-          this.images.push({url: str})
-        }
+          /^http/.test(str) && this.images.push({url: str})
 
-        this.setState(({content}) => {
-          return {
-            content: [...content, str]
+          // p>img
+          if (/img/.test(str)) {
+            str = str.match(/(?<=src=")[^"]+/g)[0]
+            this.images.push({url: str})
           }
-        })
-      }
-    })
+
+          // p>a
+          if (/<\/a>/.test(str)) {
+            str = str.replace(/<a.+?>|<\/a>/g, '')
+          }
+
+          this.setState(({content}) => {
+            return {
+              content: [...content, str]
+            }
+          })
+        }
+      })
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingBottom: 50,
+    padding: 15,
     backgroundColor: '#fff'
   },
   header: {
@@ -150,27 +157,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333'
   },
-  currentInfo: {
-    marginTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    fontSize: 12
+  content: {
+    paddingTop: 20,
+    paddingBottom: 20,
   },
   contentItem: {
-    marginTop: 10,
-    marginBottom: 10
-  },
-  imgBox: {
-    // width: '100%',
-    // height: 200
+    marginTop: 10
   },
   contentFont: {
-    fontSize: 16,
-    letterSpacing: 1,
-    lineHeight: 24,
+    fontSize: 17,
+    // letterSpacing: 1,
+    lineHeight: 28,
     color: '#4f4f4f'
   },
   strongContentFont: {
+    marginTop: 20,
+    marginBottom: 10,
     fontSize: 16,
     lineHeight: 24,
     fontWeight: 'bold',
