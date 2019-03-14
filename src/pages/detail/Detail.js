@@ -1,21 +1,25 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import {
   StyleSheet,
   View,
   Text,
   Image,
   ScrollView,
-  Dimensions
+  TouchableOpacity,
+  Modal
 } from 'react-native'
 import HeaderRight from './HeaderRight'
-
-const screenWidth = Dimensions.get('window').width
+import ImageViewer from 'react-native-image-zoom-viewer'
 
 class Detail extends Component {
 
   state = {
-    content: []
+    content: [],
+    visible: false,
+    startIndex: 0
   }
+
+  images = []
 
   static navigationOptions = ({navigation}) => ({
     headerTitle: '',
@@ -36,33 +40,38 @@ class Detail extends Component {
 
   render () {
     const { title, date } = this.props.navigation.state.params
-    console.log(this.state.content)
     return (
-      <ScrollView
-        contentContainerStyle={{paddingBottom: 10}}
-        showsVerticalScrollIndicator={false}
-        style={styles.container}>
-        <View>
-          <Text style={styles.header}>{ title }</Text>
-          <View style={styles.currentInfo}>
-            <Text>{ date }</Text>
+      <Fragment>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: 10}}
+          showsVerticalScrollIndicator={false}
+          style={styles.container}>
+          <View>
+            <Text style={styles.header}>{ title }</Text>
+            <View style={styles.currentInfo}>
+              <Text>{ date }</Text>
+            </View>
           </View>
-        </View>
 
-        <View>
-          {
-            this.state.content.map((item, idx) => (
-              <View style={styles.contentItem} key={item + idx}>
-                {
-                  /^http/.test(item)
-                  ? <Image
-                      style={{
-                        width: '100%', 
-                        height: 120
-                      }}
-                      source={{uri: item}}
-                      resizeMode='contain'
-                    />
+          <View>
+            {
+              this.state.content.map((item, idx) => (
+                <View style={styles.contentItem} key={item + idx}>
+                  {
+                    /^http/.test(item)
+                    ? <TouchableOpacity
+                        activeOpacity={0.9}
+                        onPress={() => this.handleImageClick(item)}
+                      >
+                        <Image
+                          style={{
+                            width: '100%', 
+                            height: 200
+                          }}
+                          source={{uri: item}}
+                          resizeMode='contain'
+                        />
+                      </TouchableOpacity>
                     : <View>
                         {
                           /strong/.test(item) 
@@ -70,20 +79,52 @@ class Detail extends Component {
                             : <Text style={styles.contentFont}>{ item }</Text>
                         }
                       </View>
-                }
-              </View>
-            ))
-          }
-        </View>
-      </ScrollView>
+                  }
+                </View>
+              ))
+            }
+          </View>
+        </ScrollView>
+
+        {
+          this.state.visible &&
+            <Modal
+              visible={this.state.visible}
+              transparent={true}
+              onRequestClose={this.handleImageViewerClick}
+            >
+              <ImageViewer
+                imageUrls={this.images}
+                index={this.state.startIndex}
+                onClick={this.handleImageViewerClick}
+              />
+            </Modal>
+        }
+      </Fragment>
     )
+  }
+
+  handleImageViewerClick = () => {
+    this.setState(({visible}) => ({
+      visible: false
+    }))
+  }
+
+  handleImageClick = (uri) => {
+    this.setState(({visible, startIndex}) => ({
+      visible: true,
+      startIndex: this.images.findIndex(({url}) => url === uri)
+    }))
   }
 
   handleContent = contentStr => {
     contentStr.replace(/((?<=src=")[^"]+)|(?<=<p>).+?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
       if (!/鹰眼舆情观察室|蚁坊软件|\(|更多舆情热点请关注|&nbsp;/.test(str)) {
+        /^http/.test(str) && this.images.push({url: str})
+
         if (/img/.test(str)) {
           str = str.match(/(?<=src=")[^"]+/g)[0]
+          this.images.push({url: str})
         }
 
         this.setState(({content}) => {
@@ -119,9 +160,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10
   },
-  contentImage: {
-    width: '100%',
-    height: 200
+  imgBox: {
+    // width: '100%',
+    // height: 200
   },
   contentFont: {
     fontSize: 16,

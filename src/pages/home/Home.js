@@ -29,7 +29,7 @@ class Home extends Component {
 
     return (
       <View style={styles.HomeContainer}>
-        <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
+        {/* <StatusBar backgroundColor='#fff' barStyle='dark-content'/> */}
         <ScrollableTabView 
           renderTabBar={props => <TabBar {...props}/>} 
           onChangeTab={this.handleChangeTab}
