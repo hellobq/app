@@ -1,6 +1,7 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import MainTabNavigator from './TabNavigator'
 import DetailScreen from '../pages/detail/Detail'
+import RegistryScreen from '../pages/registry/Registry'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -11,6 +12,9 @@ const MainStack = createStackNavigator({
   },
   Detail: {
     screen: DetailScreen
+  },
+  Registry: {
+    screen: RegistryScreen
   }
 }, {
   initialRouteName: 'Main',
