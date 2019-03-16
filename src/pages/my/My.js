@@ -16,29 +16,123 @@ class My extends Component {
           activeOpacity={0.8}
           onPress={() => this.handleReg()}
         >
-          <View style={styles.iconBox}>
+          <View style={styles.Avatar}>
             <Icon name={'user'} size={24} color={'#333'} />
           </View>
           <View>
-            <Text style={styles.regText}>点击登陆</Text>
+            <Text style={styles.LoginText}>点击登陆</Text>
           </View>
         </TouchableOpacity>
+
+        <View style={styles.items}>
+          <TouchableOpacity
+            style={styles.item}
+            activeOpacity={0.6}
+          >
+            <View style={styles.iconBox}>
+              <Icon
+                name={"thumbs-up"}
+                size={20}
+                color={"#39b939"}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <Text style={styles.itemText}>我赞过的</Text>
+              <Text style={styles.itemNum}>201篇</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.item}
+            activeOpacity={0.6}
+          >
+            <View style={styles.iconBox}>
+              <Icon
+                name={"star"}
+                size={20}
+                color={"#f0c26c"}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <Text style={styles.itemText}>收藏集</Text>
+              <Text style={styles.itemNum}>201篇</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.item}
+            activeOpacity={0.6}
+          >
+            <View style={styles.iconBox}>
+              <Icon
+                name={"message-square"}
+                size={20}
+                color={"#5959f0"}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <Text style={styles.itemText}>我的评论</Text>
+              <Text style={styles.itemNum}>201篇</Text>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.item}
+            activeOpacity={0.6}
+          >
+            <View style={styles.iconBox}>
+              <Icon
+                name={"eye"}
+                size={20}
+                color={"#8590A6"}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <Text style={styles.itemText}>阅读过的文章</Text>
+              <Text style={styles.itemNum}>2012篇</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              ...styles.item,
+              marginTop: 10
+            }}
+            activeOpacity={0.6}
+            onPress={this.handleClickSetting}
+          >
+            <View style={styles.iconBox}>
+              <Icon
+                name={"settings"}
+                size={20}
+                color={"#8590A6"}
+              />
+            </View>
+            <View style={styles.textBox}>
+              <Text style={styles.itemText}>设置</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     )
   }
 
   handleReg = () => {
     const { navigation } = this.props  
-    navigation.navigate('Registry', {
+    navigation.navigate('Login', {
       haha: 'lala'
     })
+  }
+
+  handleClickSetting = () => {
+    const { navigation } = this.props  
+    navigation.navigate('Setting')
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ccc'
+    backgroundColor: '#f2f2f2'
   },
   header: {
     height: 80,
@@ -48,7 +142,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff' 
   },
-  iconBox: {
+  Avatar: {
     marginRight: 20,
     width: 40,
     height: 40,
@@ -57,9 +151,47 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  regText: {
+  LoginText: {
     color: '#333',
     fontSize: 22
+  },
+  items: {
+    marginTop: 20
+  },
+  item: {
+    paddingHorizontal: 20,
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: '#fff'
+  },
+  iconBox: {
+    marginRight: 20,
+    width: 40,
+    height: 50,
+    lineHeight: 50,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff'
+  },
+  textBox: {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    borderBottomColor: '#f2f2f2'
+  },
+  itemText: {
+    fontSize: 14,
+    lineHeight: 50,
+    color: '#333'
+  },
+  itemNum: {
+    fontSize: 14,
+    lineHeight: 50,
+    color: '#8590A6'
   }
 })
 

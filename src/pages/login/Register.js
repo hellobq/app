@@ -4,13 +4,13 @@ import {
   Text,
   StyleSheet,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator
 } from 'react-native'
 import Close from './Close'
-// import console = require('console');
 
 
-class Registry extends Component {
+class Register extends Component {
 
   static navigationOptions = ({navigation}) => ({
     headerTitle: '',
@@ -25,7 +25,8 @@ class Registry extends Component {
 
   state = {
     text1: '',
-    text2: ''
+    text2: '',
+    isRegistering: false
   }
 
   render () {
@@ -34,7 +35,7 @@ class Registry extends Component {
 
         {/* 头部 */}
         <View style={styles.header}>
-          <Text style={styles.headerText}>帐号密码登陆</Text>
+          <Text style={styles.headerText}>用户注册</Text>
         </View>
 
         {/* 帐号、密码 */}
@@ -52,9 +53,9 @@ class Registry extends Component {
         </View>
         <View style={styles.inputBox}>
           <TextInput
-            style={styles.input}
             placeholder="请输入密码"
             selectionColor="#d81e06"
+            style={styles.input}
             ref={input => this.textInput2 = input}
             onChangeText={text => this.handleChangeText(text, 2)}
           ></TextInput>
@@ -64,25 +65,37 @@ class Registry extends Component {
         </View>
 
         {/* 登陆按钮 */}
-        <View style={{
-          ...styles.loginBtn,
-          backgroundColor: this.state.text1 && this.state.text2 ? '#ec6149' : '#ffbaae'
-        }}>
-          <Text style={styles.loginText}>登陆</Text>
-        </View>
-
-        {/* 忘记密码、用户注册 */}
-        <View style={styles.problems}>
-          <TouchableOpacity activeOpacity={1} onPress={this.handleForget}>
-            <Text style={styles.proBlemText}>忘记密码 ?</Text>
-          </TouchableOpacity>
-          <View style={styles.separator}></View>
-          <TouchableOpacity activeOpacity={1} onPress={this.handleRegistry}>
-            <Text style={styles.proBlemText}>用户注册</Text>
+        <View>
+          <TouchableOpacity
+            style={{
+              ...styles.registerBtn,
+              backgroundColor: this.state.text1 && this.state.text2 ? '#ec6149' : '#ffbaae'
+            }}
+            activeOpacity={.8}
+            onPress={this.handleRegister}
+          >
+            {
+              this.state.isRegistering &&
+                <ActivityIndicator
+                  size="small"
+                  color='#fff'
+                />
+            }
+            <Text style={styles.registerText}>立即注册</Text>
           </TouchableOpacity>
         </View>
       </View>
     )
+  }
+
+  handleRegister = () => {
+    const { text1, text2 } = this.state
+    if (text1.replace(/\s+/g, '').length && text2.replace(/\s+/g, '').length) {
+      this.setState(() => ({
+        isRegistering: true
+      }))
+    }
+    console.log('立即注册...')
   }
 
   handleClear = (idx) => {
@@ -92,22 +105,10 @@ class Registry extends Component {
     }))
   }
 
-  handleRegistry = () => {
-    console.log('我要注册了')
-  }
-
-  handleForget = () => {
-    console.log('我忘记密码了')
-  }
-
   handleChangeText = (text, idx) => {
     this.setState(() => ({
       [`text${idx}`]: text
-    }), () => {
-      console.log(this.state.text1, this.state.text2)
-    })
-
-    
+    }))
   }
 }
 
@@ -143,40 +144,22 @@ const styles = StyleSheet.create({
     color:'#333',
     fontSize: 16
   },
-  loginBtn: {
+  registerBtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginHorizontal: 20,
     height: 48,
     lineHeight: 48,
     borderRadius: 24
   },
-  loginText: {
+  registerText: {
+    marginLeft: 10,
     color: '#fff',
     fontSize: 20,
     lineHeight: 48,
     textAlign: 'center'
-  },
-  problems: {
-    marginTop: 20,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  proBlemText: {
-    color: '#3194d0',
-    paddingHorizontal: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    fontSize: 14,
-    lineHeight: 20
-  },
-  separator: {
-    marginHorizontal: 10,
-    height: 14,
-    borderLeftWidth: 1,
-    borderLeftColor: '#ddd',
-    borderStyle: 'solid'
   }
 })
 
-export default Registry
+export default Register
