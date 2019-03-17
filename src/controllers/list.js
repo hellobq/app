@@ -1,6 +1,6 @@
-const Report = require('../db/Report')
+const { Report } = require('../db/Schema')
 
-const getList = async (ctx, next) => {
+const list = async (ctx, next) => {
   const {query: {type, page, num}} = ctx
   let data = null
 
@@ -20,4 +20,4 @@ const getList = async (ctx, next) => {
   ctx.body = data
 }
 
-module.exports = getList
+module.exports = list

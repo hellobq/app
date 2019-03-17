@@ -1,7 +1,10 @@
 const Koa = require('koa')
+const bodyParser = require('koa-bodyparser')
 const app = new Koa()
 const routers = require('./routers')
 const port = 4321
+
+app.use(bodyParser())
 
 app.use(async (ctx, next) => {
   ctx.set('Access-Control-Allow-Origin', '*');

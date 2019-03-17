@@ -5,7 +5,7 @@ const {
   webSite
 } = require('./config')
 const connect = require('../db/connect')
-const Report = require('../db/Report')
+const { Report } = require('../db/Schema')
 const DemoReport = require('../db/DemoReport')
 
 const analyzeList = page => {
@@ -108,4 +108,4 @@ const spider = () => {
   
 }
 
-module.exports = spider
+spider()

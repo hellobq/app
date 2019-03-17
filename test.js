@@ -1,13 +1,12 @@
-let str = `
-  <p><img src="/image/20190215173254-28126" title="" alt=""></p>
-`
+const { User } = require('./src/db/Schema')
+const connect = require('./src/db/connect')
 
-let arr = []
-str.replace(/((?<=src=")[^"]+)|(?<=<p>).+?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
-  console.log(str + '\n')
+const selectDemo = async () => {
+  await connect()
 
-  if (/img/.test(str)) {
-    str = str.match(/(?<=src=")[^"]+/g)[0]
-    console.log(str)
-  }
-})
+  User.find({}).exec((err, data) => {
+    console.log(err, data)
+  })
+}
+
+selectDemo()
