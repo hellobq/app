@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   ActivityIndicator
 } from 'react-native'
+import { connect } from 'react-redux'
+import { changeUserInfo, gotoLogin, showLoginIcon, clearTextInput } from './actionCreators'
+import Icon from 'react-native-vector-icons/Feather'
 import Close from './Close'
 
 
@@ -23,13 +26,15 @@ class Login extends Component {
     }
   })
 
-  state = {
-    text1: '',
-    text2: '',
-    isLogining: false
+  componentDidUpdate () {
+    const { message, navigation } = this.props
+    if (message === 'ok') {
+      navigation.goBack()
+    }
   }
 
   render () {
+    const { name, pwd, isLogining, handleLogin, message, handleChangeText, handleClear } = this.props
     return (
       <View style={styles.wrapper}>
 
@@ -44,23 +49,29 @@ class Login extends Component {
             style={styles.input}
             placeholder="请输入用户名"
             selectionColor="#d81e06"
+            value={name}
+            underlineColorAndroid='transparent'
+            spellCheck={false}
             ref={input => this.textInput1 = input}
-            onChangeText={text => this.handleChangeText(text, 1)}
+            onChangeText={text => handleChangeText(text, 1)}
           ></TextInput>
           {
-            !!this.state.text1 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(1)} />
+            name.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear(1)} />
           }
         </View>
         <View style={styles.inputBox}>
           <TextInput
             placeholder="请输入密码"
             selectionColor="#d81e06"
+            underlineColorAndroid='transparent'
+            spellCheck={false}
+            value={pwd}
             style={styles.input}
             ref={input => this.textInput2 = input}
-            onChangeText={text => this.handleChangeText(text, 2)}
+            onChangeText={text => handleChangeText(text, 2)}
           ></TextInput>
           {
-            !!this.state.text2 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(2)} />
+            pwd.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear(2)} />
           }
         </View>
 
@@ -69,13 +80,13 @@ class Login extends Component {
           <TouchableOpacity
             style={{
               ...styles.loginBtn,
-              backgroundColor: this.state.text1 && this.state.text2 ? '#ec6149' : '#ffbaae'
+              backgroundColor: name && pwd ? '#ec6149' : '#ffbaae'
             }}
             activeOpacity={.8}
-            onPress={this.handleLogin}
+            onPress={() => handleLogin(name, pwd)}
           >
             {
-              this.state.isLogining &&
+              isLogining &&
                 <ActivityIndicator
                   size="small"
                   color='#fff'
@@ -104,24 +115,6 @@ class Login extends Component {
       </View>
     )
   }
-
-  handleLogin = () => {
-    const { text1, text2 } = this.state
-    if (text1.replace(/\s+/g, '').length && text2.replace(/\s+/g, '').length) {
-      this.setState(() => ({
-        isLogining: true
-      }))
-      console.log('login...')
-    }
-  }
-
-  handleClear = (idx) => {
-    this[`textInput${idx}`].clear()
-    this.setState(() => ({
-      [`text${idx}`]: ''
-    }))
-  }
-
   handleRegister = () => {
     const { navigation } = this.props
     navigation.navigate('Register')
@@ -130,12 +123,6 @@ class Login extends Component {
   handleForget = () => {
     const { navigation } = this.props
     navigation.navigate('Forget')
-  }
-
-  handleChangeText = (text, idx) => {
-    this.setState(() => ({
-      [`text${idx}`]: text
-    }))
   }
 }
 
@@ -211,4 +198,29 @@ const styles = StyleSheet.create({
   }
 })
 
-export default Login
+const mapState = state => {
+  return {
+    name: state.getIn(['user', 'name']),
+    pwd: state.getIn(['user', 'pwd']),
+    isLogining: state.getIn(['user', 'isLogining']),
+    message: state.getIn(['user', 'message'])
+  }
+}
+
+const mapDispatch = dispatch => ({
+  handleChangeText (text, idx) {
+    dispatch(changeUserInfo(text, idx))
+  },
+  handleLogin (name, pwd) {
+    if (name.replace(/\s+/g, '').length && pwd.replace(/\s+/g, '').length) {
+      dispatch(showLoginIcon())
+      dispatch(gotoLogin(name, pwd))
+    }
+  },
+  
+  handleClear (idx) {
+    dispatch(clearTextInput(idx))
+  }
+})
+
+export default connect(mapState, mapDispatch)(Login)

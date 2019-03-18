@@ -8,7 +8,7 @@ import {
   ActivityIndicator
 } from 'react-native'
 import Close from './Close'
-
+import Toast from '../components/toast'
 
 class Register extends Component {
 
@@ -24,16 +24,18 @@ class Register extends Component {
   })
 
   state = {
-    text1: '',
-    text2: '',
-    isRegistering: false
+    name: '',
+    pwd: '',
+    isRegistering: false,
+    message: ''
   }
 
   render () {
+    const { name, pwd, isRegistering, message } = this.state
     return (
       <View style={styles.wrapper}>
 
-        {/* 头部 */}
+        {/* 注册头部 */}
         <View style={styles.header}>
           <Text style={styles.headerText}>用户注册</Text>
         </View>
@@ -44,11 +46,11 @@ class Register extends Component {
             style={styles.input}
             placeholder="请输入用户名"
             selectionColor="#d81e06"
-            ref={input => this.textInput1 = input}
+            value={name}
             onChangeText={text => this.handleChangeText(text, 1)}
           ></TextInput>
           {
-            !!this.state.text1 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(1)} />
+            name.length > 0 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(1)} />
           }
         </View>
         <View style={styles.inputBox}>
@@ -56,58 +58,96 @@ class Register extends Component {
             placeholder="请输入密码"
             selectionColor="#d81e06"
             style={styles.input}
-            ref={input => this.textInput2 = input}
+            value={pwd}
             onChangeText={text => this.handleChangeText(text, 2)}
           ></TextInput>
           {
-            !!this.state.text2 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(2)} />
+            pwd.length > 0 && <Close name='x' size={20} color={'#333'} close={() => this.handleClear(2)} />
           }
         </View>
 
-        {/* 登陆按钮 */}
+        {/* 注册按钮 */}
         <View>
           <TouchableOpacity
             style={{
               ...styles.registerBtn,
-              backgroundColor: this.state.text1 && this.state.text2 ? '#ec6149' : '#ffbaae'
+              backgroundColor: name && pwd ? '#ec6149' : '#ffbaae'
             }}
             activeOpacity={.8}
             onPress={this.handleRegister}
           >
             {
-              this.state.isRegistering &&
+              isRegistering &&
                 <ActivityIndicator
                   size="small"
                   color='#fff'
                 />
             }
-            <Text style={styles.registerText}>立即注册</Text>
+            <Text style={styles.registerText}>
+              {
+                message === 'ok'
+                  ? '注册成功'
+                  : '立即注册'
+              }
+            </Text>
           </TouchableOpacity>
         </View>
+
+        <Toast
+          ref={toast => this.toast = toast}
+          toastStyle={{
+            width: '40%',
+            backgroundColor: '#f2f2f2',
+            borderRadius: 4
+          }}
+          toastTextStyle={{
+            fontSize: 18,
+            textAlign: 'center',
+            lineHeight: 40,
+            color: '#333'
+          }}
+        />
       </View>
     )
   }
 
-  handleRegister = () => {
-    const { text1, text2 } = this.state
-    if (text1.replace(/\s+/g, '').length && text2.replace(/\s+/g, '').length) {
+  handleRegister = async () => {
+    const { name, pwd } = this.state
+    if (name.replace(/\s+/g, '').length && pwd.replace(/\s+/g, '').length) {
       this.setState(() => ({
         isRegistering: true
       }))
+      
+      const { _bodyText } = await fetch('http://192.168.199.166:4321/api/registry', {
+        method: 'POST',
+        headers: {
+          "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+        body: `name=${name}&pwd=${pwd}`
+      })
+      
+      const { success, message } = JSON.parse(_bodyText)
+      if (success && message === 'ok') {
+        this.setState(() => ({
+          isRegistering: false,
+          message
+        }), () => {
+          this.toast.show()
+          this.props.navigation.goBack()
+        })
+      }
     }
-    console.log('立即注册...')
   }
 
   handleClear = (idx) => {
-    this[`textInput${idx}`].clear()
     this.setState(() => ({
-      [`text${idx}`]: ''
+      [idx === 1 ? 'name' : 'pwd']: ''
     }))
   }
 
   handleChangeText = (text, idx) => {
     this.setState(() => ({
-      [`text${idx}`]: text
+      [idx === 1 ? 'name' : 'pwd']: text
     }))
   }
 }

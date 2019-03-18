@@ -6,9 +6,21 @@ import {
   TouchableOpacity
 } from 'react-native'
 import Icon from 'react-native-vector-icons/Feather'
+import { connect } from 'react-redux'
+import { getUserNums } from './actionCreators'
+import { is } from 'immutable'
 
 class My extends Component {
+
+  shouldComponentUpdate (nextProps) {
+    const { data, message } = this.props
+    const { data: nextData, message: nextMsg } = nextProps
+
+    return !is(nextData, data) || !is(nextMsg, message)
+  }
+
   render () {
+    const { name, message, data } = this.props
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -20,7 +32,11 @@ class My extends Component {
             <Icon name={'user'} size={24} color={'#333'} />
           </View>
           <View>
-            <Text style={styles.LoginText}>点击登陆</Text>
+            <Text style={styles.LoginText}>
+              {
+                message === 'ok' ? `${name}` : '点击登陆' 
+              }
+            </Text>
           </View>
         </TouchableOpacity>
 
@@ -116,6 +132,15 @@ class My extends Component {
     )
   }
 
+  componentDidUpdate () {
+    const { name, message, handleLoginSuccess } = this.props
+
+    if (message === 'ok') {
+      console.log('成功登陆了...')
+      handleLoginSuccess(name)
+    }
+  }
+
   handleReg = () => {
     const { navigation } = this.props  
     navigation.navigate('Login', {
@@ -195,4 +220,16 @@ const styles = StyleSheet.create({
   }
 })
 
-export default My
+const mapState = state => ({
+  name: state.getIn(['user', 'name']),
+  message: state.getIn(['user', 'message']),
+  data: state.getIn(['my', 'data'])
+})
+
+const mapDispatch = dispatch => ({
+  handleLoginSuccess (name) {
+    dispatch(getUserNums(name))
+  }
+})
+
+export default connect(mapState, mapDispatch)(My)
