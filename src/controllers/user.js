@@ -8,7 +8,8 @@ const registry = async (ctx, next) => {
   await User.create({name, pwd, regDate: new Date()})
     .then(() => {
       ctx.body = {
-        success: true
+        success: true,
+        message: 'ok'
       }
     })
     .catch(err => {
@@ -28,7 +29,7 @@ const login = async (ctx, next) => {
     const isRight = data.pwd === pwd
     ctx.body = {
       success: isRight,
-      message: isRight ? null : '密码输入错误'
+      message: isRight ? 'ok' : '密码输入错误'
     }
   } else {
     ctx.body = {
@@ -47,7 +48,7 @@ const resetPwd = async (ctx, next) => {
     await User.updateOne({ name }, { pwd }, (err) => {
       ctx.body = {
         success: true,
-        message: err ? handleErr(err) : null
+        message: err ? handleErr(err) : 'ok'
       }
     })
   } else {
@@ -58,8 +59,24 @@ const resetPwd = async (ctx, next) => {
   }
 }
 
+// 查看 观看数、评论数、收藏数
+const user = async (ctx, next) => {
+  const { name } = ctx.query 
+
+  const data = await User.findOne({ name }).populate('views.report_id', 'type image href title description')
+  const { comments } = await User.findOne({ name }).populate('comments', 'date content')
+  const { collections } = await User.findOne({ name }).populate('collections', 'type image href title description')
+
+
+  ctx.body = {
+    success: true,
+    data: Object.assign(data, { comments, collections })
+  }
+}
+
 module.exports = {
   registry,
   login,
-  resetPwd
+  resetPwd,
+  user
 }

@@ -9,13 +9,7 @@
 <body>
   
   <script>
-    fetch('http://localhost:4321/api/reset-pwd', {
-      method: 'POST',
-      headers: {
-        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-      },
-      body: `name=${'haha'}&pwd=${'lale'}`
-    }) 
+    fetch('http://localhost:4321/api/user?name=haha') 
       .then(data => data.json())
       .then(json => {
         console.log(json)

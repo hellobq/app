@@ -28,10 +28,13 @@ const UserSchema = new Schema({
   collections: [{
     type: Schema.Types.ObjectId,
     ref: 'Report'
-  }],
+  }], 
   views: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Report'
+    report_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Report'
+    },
+    view_date: Date
   }]
 }, {
   collection: 'users',
@@ -45,7 +48,7 @@ const CommentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  Objects: {
+  report: {
     type: Schema.Types.ObjectId,
     ref: 'Report'
   }
