@@ -36,7 +36,7 @@ class MainTabNavigator extends Component {
               selectedTitleStyle={styles.selectedTabText}
               renderIcon={() => <Image style={styles.imgIcon} source={icon} />}
               renderSelectedIcon={() => <Image style={styles.imgIcon} source={selectedIcon} />}
-              onPress={() => this.setState({ selectedTabTitle: tabTitle })}
+              onPress={() => this.handleClick(tabTitle)}
             >
               <Component navigation={ this.props.navigation } />
             </TabNavigator.Item>
@@ -44,6 +44,12 @@ class MainTabNavigator extends Component {
         }
       </TabNavigator>
     )
+  }
+  
+  handleClick = (tabTitle) => {
+    this.setState(() => ({
+      selectedTabTitle: tabTitle
+    }))
   }
 }
 

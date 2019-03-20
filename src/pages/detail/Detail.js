@@ -14,12 +14,9 @@ import ImageViewer from 'react-native-image-zoom-viewer'
 class Detail extends Component {
 
   state = {
-    content: [],
     visible: false,
     startIndex: 0
   }
-
-  images = []
 
   static navigationOptions = ({navigation}) => ({
     headerTitle: '',
@@ -33,15 +30,10 @@ class Detail extends Component {
     }
   })
 
-  componentDidMount () {
-    const { content } = this.props.navigation.state.params
-    console.log(content)
-    this.handleContent(content)
-  }
-
   render () {
-    const { title, date } = this.props.navigation.state.params
-    // console.log(this.state.content)
+    const { title, date, img_urls, content} = this.props.navigation.state.params
+    console.log(content, img_urls)
+
     return (
       <Fragment>
         <ScrollView
@@ -54,7 +46,7 @@ class Detail extends Component {
 
           <View style={styles.content}>
             {
-              this.state.content.map((item, idx) => (
+              content.map((item, idx) => (
                 <View style={styles.contentItem} key={item + idx}>
                   {
                     /^http/.test(item)
@@ -94,7 +86,7 @@ class Detail extends Component {
               onRequestClose={this.handleImageViewerClick}
             >
               <ImageViewer
-                imageUrls={this.images}
+                imageUrls={img_urls}
                 index={this.state.startIndex}
                 onClick={this.handleImageViewerClick}
               />
@@ -111,38 +103,12 @@ class Detail extends Component {
   }
 
   handleImageClick = (uri) => {
+    const { img_urls } = this.props.navigation.state.params
+
     this.setState(() => ({
       visible: true,
-      startIndex: this.images.findIndex(({url}) => url === uri)
+      startIndex: img_urls.findIndex(({url}) => url === uri)
     }))
-  }
-
-  handleContent = contentStr => {
-    contentStr
-      .replace(/\s+/g, '')
-      .replace(/((?<=src=")[^"]+)|(?<=<p>).*?(?=<\/p>)|(?<=<h\d>).+?(?=<\/h\d>)/g, str => {
-        if (str &&!/鹰眼舆情观察室|更多舆情热点请关注|蚁坊软件|\(|（|<\/?br>/.test(str)) {
-
-          /^http/.test(str) && this.images.push({url: str})
-
-          // p>img
-          if (/img/.test(str)) {
-            str = str.match(/(?<=src=")[^"]+/g)[0]
-            this.images.push({url: str})
-          }
-
-          // p>a
-          if (/<\/a>/.test(str)) {
-            str = str.replace(/<a.+?>|<\/a>/g, '')
-          }
-
-          this.setState(({content}) => {
-            return {
-              content: [...content, str]
-            }
-          })
-        }
-      })
   }
 }
 

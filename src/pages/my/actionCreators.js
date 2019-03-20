@@ -5,7 +5,6 @@ export const getUserNums = name => async dispatch => {
   
   const { success, data } = JSON.parse(_bodyText)
   if (success) {
-    console.log(data)
     dispatch(changeUserNums(data))
   }
 }

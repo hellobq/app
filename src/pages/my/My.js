@@ -14,13 +14,16 @@ class My extends Component {
 
   shouldComponentUpdate (nextProps) {
     const { data, message } = this.props
-    const { data: nextData, message: nextMsg } = nextProps
+    const { data: nextData, name, message: nextMsg } = nextProps
 
-    return !is(nextData, data) || !is(nextMsg, message)
+    return name && (!is(nextMsg, message) || !is(nextData, data))
   }
 
   render () {
-    const { name, message, data } = this.props
+    let { name, message, data } = this.props
+    data = data.toJS()
+
+    console.log('My 渲染了...')
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -71,7 +74,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>收藏集</Text>
-              <Text style={styles.itemNum}>201篇</Text>
+              <Text style={styles.itemNum}>{ data.collections ? data.collections.length : 0 }篇</Text>
             </View>
           </TouchableOpacity>
 
@@ -88,7 +91,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>我的评论</Text>
-              <Text style={styles.itemNum}>201篇</Text>
+              <Text style={styles.itemNum}>{ data.comments ? data.comments.length : 0 }篇</Text>
             </View>
           </TouchableOpacity>
 
@@ -105,7 +108,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>阅读过的文章</Text>
-              <Text style={styles.itemNum}>2012篇</Text>
+              <Text style={styles.itemNum}>{ data.views ? data.views.length : 0 }篇</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -132,11 +135,16 @@ class My extends Component {
     )
   }
 
+  // 用户登陆后
   componentDidUpdate () {
-    const { name, message, handleLoginSuccess } = this.props
+    const {
+      name,
+      message,
+      handleLoginSuccess,
+      data
+    } = this.props
 
-    if (message === 'ok') {
-      console.log('成功登陆了...')
+    if (message === 'ok' && !data.toJS().name) {
       handleLoginSuccess(name)
     }
   }

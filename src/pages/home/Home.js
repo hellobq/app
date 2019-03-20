@@ -77,11 +77,11 @@ class Home extends Component {
     )
   }
 
-  _renderItem = ({item: {_id, title, date, content, description, image}}) => {
+  _renderItem = ({item: {_id, title, date, content, img_urls, description, image}}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={() => this.handlePress(_id, title, date, content)}
+        onPress={() => this.handlePress(_id, title, date, img_urls, content)}
       >
         <View style={styles.item}>
           <View>
@@ -166,12 +166,13 @@ class Home extends Component {
     getList(column, currentPage, this.num)
   }
 
-  handlePress = (id, title, date, content) => {
+  handlePress = (id, title, date, img_urls, content) => {
     const { navigation } = this.props
     navigation.navigate('Detail', {
       id: id + '',
       title,
       date,
+      img_urls,
       content
     })
   }
