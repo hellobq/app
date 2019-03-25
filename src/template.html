@@ -9,7 +9,13 @@
 <body>
   
   <script>
-    fetch('http://localhost:4321/api/user?name=haha') 
+    fetch('http://localhost:4321/api/thumbsUp', {
+      method: 'post',
+      headers: {
+        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+      },
+      body: `name_id=${'5c8e0c19258ddc2b84435ee1'}&report_id=${'5c669bbf419fcb47ec9bbbf2'}` 
+    }) 
       .then(data => data.json())
       .then(json => {
         console.log(json)

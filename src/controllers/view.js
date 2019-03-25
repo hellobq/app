@@ -1,9 +1,9 @@
-const { User } = require('../db/Schema')
-const handleErr = require('./handleErr')
+const { User } = require('../db/Schema');
+const handleErr = require('./handleErr');
 
-// 已经看过文章
+// 已经看过文章 --- view
 const view = async (ctx, next) => {
-  const { name, _id } = ctx.request.body
+  const { name, _id } = ctx.request.body;
 
   await User.updateMany({
     name
@@ -13,7 +13,7 @@ const view = async (ctx, next) => {
         report_id: _id
       }
     }
-  })
+  });
 
   await User.updateOne({
     name
@@ -24,11 +24,11 @@ const view = async (ctx, next) => {
         view_date: new Date()
       }
     }
-  })
+  });
 
   ctx.body = {
     success: true
-  }
+  };
 }
 
-module.exports = view
+module.exports = view;

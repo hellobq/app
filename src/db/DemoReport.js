@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const ReportSchema = new Schema({
   type: String,
@@ -12,6 +12,6 @@ const ReportSchema = new Schema({
 }, {
   collection: 'demoReports',
   versionKey: false
-})
+});
 
-module.exports = mongoose.model('DemoReport', ReportSchema)
+module.exports = mongoose.model('DemoReport', ReportSchema);

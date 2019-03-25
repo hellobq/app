@@ -5,4 +5,4 @@ module.exports = {
   user: '',
   pwd: '',
   dbPort: 27017
-}
+};
