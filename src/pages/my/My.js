@@ -57,7 +57,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>我赞过的</Text>
-              <Text style={styles.itemNum}>201篇</Text>
+              <Text style={styles.itemNum}>0篇</Text>
             </View>
           </TouchableOpacity>
 

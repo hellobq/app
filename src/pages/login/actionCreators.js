@@ -14,8 +14,8 @@ export const gotoLogin = (name, pwd) => async dispatch => {
     body: `name=${name}&pwd=${pwd}`
   })
   
-  const { success, message } = JSON.parse(_bodyText)
-  dispatch(changeMessage(message))
+  const { success, message, user_id } = JSON.parse(_bodyText)
+  dispatch(changeMessage(message, user_id))
   dispatch(showLoginIcon(false))
 }
 
@@ -32,9 +32,12 @@ export const showLoginIcon = (value = true) => ({
   value
 })
 
-export const changeMessage = (message) => ({
+export const changeMessage = (message, user_id) => ({
   type: CHANGE_MESSAGE,
-  value: message
+  value: {
+    message,
+    user_id
+  }
 })
 
 export const clearTextInput = idx => ({

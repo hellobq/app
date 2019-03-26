@@ -7,6 +7,7 @@ import {
 } from './actionTypes'
 
 const userInfo = fromJS({
+  user_id: '',
   name: '',
   pwd: '',
   isLogining: false,
@@ -26,7 +27,12 @@ export default (state = userInfo, action) => {
       return state.set('isLogining', action.value)
 
     case CHANGE_MESSAGE:
-      return state.set('message', action.value)
+      const { message, user_id } = action.value;
+      console.log(message, user_id);
+      return state.merge({
+        message,
+        user_id
+      });
 
     case CHANGE_TEXT_INPUT:
       console.log('clear....', action.value)
