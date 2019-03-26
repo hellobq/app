@@ -29,7 +29,8 @@ const login = async (ctx, next) => {
     const isRight = data.pwd === pwd;
     ctx.body = {
       success: isRight,
-      message: isRight ? 'ok' : '密码输入错误'
+      message: isRight ? 'ok' : '密码输入错误',
+      user_id: data._id
     };
   } else {
     ctx.body = {

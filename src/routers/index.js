@@ -8,6 +8,7 @@ const { toogleCollection, getCollectionList} = require('../controllers/collectio
 const demoHtml = require('../controllers/demoHtml');
 const connect = require('../db/connect');
 const { getThumbsUpList, toogleThumbsUp } = require('../controllers/thumbsUp');
+const getThumbsupAndStar = require('../controllers/getThumbsupAndStar');
 
 const connectRouter = async () => {
   await connect();
@@ -24,6 +25,7 @@ const connectRouter = async () => {
   routers.get('/api/getCollectionList', getCollectionList);
   routers.post('/api/toogleThumbsUp', toogleThumbsUp);
   routers.get('/api/getThumbsUpList', getThumbsUpList);
+  routers.get('/api/getThumbsupAndStar', getThumbsupAndStar);
 }
 
 connectRouter();
