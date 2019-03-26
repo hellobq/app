@@ -3,11 +3,11 @@ const routers = require('koa-router')();
 const list = require('../controllers/list');
 const { registry, login, resetPwd, user } = require('../controllers/user');
 const view = require('../controllers/view');
-const comment = require('../controllers/comment');
-const collection = require('../controllers/collection');
+const { comment, getComments } = require('../controllers/comment');
+const { toogleCollection, getCollectionList} = require('../controllers/collection');
 const demoHtml = require('../controllers/demoHtml');
 const connect = require('../db/connect');
-const thumbsUp = require('../controllers/thumbsUp');
+const { getThumbsUpList, toogleThumbsUp } = require('../controllers/thumbsUp');
 
 const connectRouter = async () => {
   await connect();
@@ -19,8 +19,11 @@ const connectRouter = async () => {
   routers.post('/api/reset-pwd', resetPwd);
   routers.post('/api/view', view);
   routers.post('/api/comment', comment);
-  routers.post('/api/collection', collection);
-  routers.post('/api/thumbsUp', thumbsUp);
+  routers.get('/api/getComments', getComments)
+  routers.post('/api/toogleCollection', toogleCollection);
+  routers.get('/api/getCollectionList', getCollectionList);
+  routers.post('/api/toogleThumbsUp', toogleThumbsUp);
+  routers.get('/api/getThumbsUpList', getThumbsUpList);
 }
 
 connectRouter();

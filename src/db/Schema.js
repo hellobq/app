@@ -27,7 +27,7 @@ const UserSchema = new Schema({
   }],
   collections: [{
     type: Schema.Types.ObjectId,
-    ref: 'Report'
+    ref: 'Collection'
   }], 
   views: [{
     report_id: {
@@ -48,6 +48,10 @@ const UserSchema = new Schema({
 const CommentSchema = new Schema({
   content: String,
   date: Date,
+  isDeleted: {
+    type: Boolean,
+    default: false
+  },
   commenter: {
     type: Schema.Types.ObjectId,
     ref: 'User'

@@ -9,12 +9,12 @@
 <body>
   
   <script>
-    fetch('http://localhost:4321/api/thumbsUp', {
+    fetch('http://localhost:4321/api/comment', {
       method: 'post',
       headers: {
         "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
       },
-      body: `name_id=${'5c8e0c19258ddc2b84435ee1'}&report_id=${'5c669bbf419fcb47ec9bbbf2'}` 
+      body: `name_id=${'5c8e0c19258ddc2b84435ee1'}&report_id=${'5c669bbf419fcb47ec9bbbf6'}&content=${'嘎嘎嘎....'}` 
     }) 
       .then(data => data.json())
       .then(json => {
@@ -23,6 +23,16 @@
       .catch(err => {
         console.log('出错了...', err)
       })
+
+    // fetch(`http://localhost:4321/api/getComments?name_id=${'5c8e0c19258ddc2b84435ee1'}`) 
+    //   .then(data => data.json())
+    //   .then(json => {
+    //     console.log(json)
+    //   }) 
+    //   .catch(err => {
+    //     console.log('出错了...', err)
+    //   })
+
   </script>
 </body>
 </html>
