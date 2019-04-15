@@ -1,7 +1,9 @@
 import { GET_USER_NUMS  } from './actionTypes'
+import { user } from '../../api'
 
 export const getUserNums = name => async dispatch => {
-  const { _bodyText } = await fetch(`http://192.168.199.166:4321/api/user?name=${name}`)
+  const { url } = user
+  const { _bodyText } = await fetch(`${url}?name=${name}`)
   
   const { success, data } = JSON.parse(_bodyText)
   if (success) {

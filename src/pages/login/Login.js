@@ -29,7 +29,7 @@ class Login extends Component {
   componentDidUpdate () {
     const { message, navigation } = this.props
     if (message === 'ok') {
-      navigation.goBack()
+      navigation.navigate('Main')
     }
   }
 

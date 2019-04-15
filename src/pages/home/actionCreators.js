@@ -1,18 +1,20 @@
-// import axios from 'axios'
-import { FETCH_LIST, SET_LIST } from './actionTypes'
+import { SET_LIST } from './actionTypes';
+import { list } from '../../api';
 
-export const getList = (type, page, num) => dispatch => {
-  fetch(`http://192.168.199.166:4321/api/list?type=${type}&page=${page}&num=${num}`)
-    .then(res => res.json())
-    .then(({success, data}) => {
+export const getList = (type, page, num) => async dispatch => {
+  const { url } = list;
+  try {
+    const { _bodyText } = await fetch(`${url}?type=${type}&page=${page}&num=${num}`);
+    const { success, data } = JSON.parse(_bodyText);
+    if (success) {
       dispatch({
         type: SET_LIST,
         listType: type,
         value: data
-      })
-    })
-    .catch(() => {
-      console.error(`请求出错，链接是：${`http://192.168.199.166:4321/api/list?type=${type}&page=${page}&num=${num}`}`)
-    })
+      });
+    }
+  } catch(e) {
+    console.log('请求出错...', e);
+  }
 }
 

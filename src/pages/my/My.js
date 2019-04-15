@@ -78,7 +78,7 @@ class My extends Component {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.item}
             activeOpacity={0.6}
           >
@@ -93,7 +93,7 @@ class My extends Component {
               <Text style={styles.itemText}>我的评论</Text>
               <Text style={styles.itemNum}>{ data.comments ? data.comments.length : 0 }篇</Text>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity
             style={styles.item}

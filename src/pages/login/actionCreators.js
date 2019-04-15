@@ -4,10 +4,12 @@ import {
   CHANGE_MESSAGE,
   CHANGE_TEXT_INPUT
 } from './actionTypes'
+import { login } from '../../api'
 
 export const gotoLogin = (name, pwd) => async dispatch => {
-  const { _bodyText } = await fetch('http://192.168.199.166:4321/api/login', {
-    method: 'POST',
+  const { method, url } = login
+  const { _bodyText } = await fetch(url, {
+    method,
     headers: {
       "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
     },

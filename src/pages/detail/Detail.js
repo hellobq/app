@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
   Modal
 } from 'react-native'
-import HeaderRight from './HeaderRight'
 import ImageViewer from 'react-native-image-zoom-viewer'
 import Icon from 'react-native-vector-icons/Feather'
 import { connect } from 'react-redux'
 import {
   thumbsUp,
+  collect,
   getThumbsupAndStar
 } from './actionCreators'
 
@@ -25,20 +25,12 @@ class Detail extends Component {
   }
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: '',
-    headerRight: <HeaderRight />,
-    headerRightContainerStyle: {
-      margin: 4,
-      paddingHorizontal: 20,
-      fontSize: 20,
-      color: '#fff',
-      backgroundColor: 'red',
-    }
+    headerTitle: '文章详情页',
   })
 
   render () {
     const { title, date, img_urls, content} = this.props.navigation.state.params
-    const { thumbsUpNum, collections, handleCollection, thumbsUpState, collectionState } = this.props
+    const { thumbsUpNum, collections, thumbsUpState, collectionState } = this.props
 
     return (
       <Fragment>
@@ -85,43 +77,40 @@ class Detail extends Component {
         </ScrollView>
 
         <View style={styles.bottomBar}>
-          <Text style={styles.leftViewText}>输入评论...</Text>
-          <View style={styles.iconBoxGroup}>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={this.handleLeftBtn}
-              style={styles.iconBox}
-            >
-              <Icon
-                name={"thumbs-up"}
-                size={18}
-                color={thumbsUpState ? '#ff0000' : "#8590A6"}
-              />
-              <Text style={{
-                ...styles.iconText,
-                color: thumbsUpState ? '#ff0000' : '#8590A6'
-              }}>
-                { thumbsUpNum }
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={handleCollection}
-              style={styles.iconBox}
-            >
-              <Icon
-                name={"star"}
-                size={18}
-                color={collectionState ? '#ff0000' : "#8590A6"}
-              />
-              <Text style={{
-                ...styles.iconText,
-                color: collectionState ? '#ff0000' : '#8590A6'
-              }}>
-                { collections }
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => this.props.handleThumbsUp()}
+            style={styles.iconBox}
+          >
+            <Icon
+              name={"thumbs-up"}
+              size={18}
+              color={thumbsUpState ? '#ff0000' : "#8590A6"}
+            />
+            <Text style={{
+              ...styles.iconText,
+              color: thumbsUpState ? '#ff0000' : '#8590A6'
+            }}>
+              { thumbsUpNum }
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={() => this.props.handleCollect()}
+            style={styles.iconBox}
+          >
+            <Icon
+              name={"star"}
+              size={18}
+              color={collectionState ? '#ff0000' : "#8590A6"}
+            />
+            <Text style={{
+              ...styles.iconText,
+              color: collectionState ? '#ff0000' : '#8590A6'
+            }}>
+              { collections }
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <Modal
@@ -140,23 +129,8 @@ class Detail extends Component {
   }
 
   componentDidMount () {
-    const { handleComponentMount } = this.props;
-    const { id: report_id } = this.props.navigation.state.params;
-
-    handleComponentMount(report_id);
-  }
-
-  handleLeftBtn = () => {
-    const { user_id, navigation, handleThumbsUp } = this.props;
-    console.log(user_id)
-    if (!user_id) {
-      console.log('未登陆');
-      navigation.navigate('Login');
-    } else {
-      console.log('登陆了...', this.props.navigation.state.params);
-      const { id: report_id } = this.props.navigation.state.params;
-      handleThumbsUp(user_id, report_id);
-    }
+    console.log('进入详情页 mounted...')
+    this.props.handleComponentMount();
   }
 
   handleImageViewerClick = () => {
@@ -207,38 +181,19 @@ const styles = StyleSheet.create({
     color: '#333'
   },
   bottomBar: {
-    paddingHorizontal: 15,
-    paddingTop: 8,
-    paddingBottom: 8,
-    display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     backgroundColor: '#fff',
-    borderTopColor: '#ddd',
+    borderTopColor: '#f2f2f2',
     borderStyle: 'solid',
     borderTopWidth: 1
   },
-  leftViewText: {
-    width: '50%',
-    paddingLeft: 20,
-    marginRight: 20,
-    height: 30,
-    fontSize: 14,
-    lineHeight: 30,
-    backgroundColor: '#f2f2f2',
-    color: '#8590A6',
-    borderRadius: 15
-  },
-  iconBoxGroup: {
+  iconBox: {
+    marginHorizontal: 20,
+    marginTop: 14,
+    marginBottom: 14,
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-  },
-  iconBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center'
   },
   iconText: {
@@ -251,20 +206,35 @@ const mapState = state => ({
   thumbsUpNum: state.getIn(['detail', 'thumbsUpNum']),
   thumbsUpState: state.getIn(['detail', 'thumbsUpState']),
   collections: state.getIn(['detail', 'collections']),
-  collectionState: state.getIn(['detail', 'collectionState'])
+  collectionState: state.getIn(['detail', 'collectionState']),
+  inputText: state.getIn(['detail', 'inputText']),
+  showInput: state.getIn(['detail', 'showInput'])
 });
 
 const mapDispatch = dispatch => ({
-  handleComponentMount (report_id) {
-    dispatch(getThumbsupAndStar(report_id))
-  },
-  handleCollection () {
-    console.log('收藏')
-    console.log(this)
-  },
+  handleComponentMount () {
+    const { navigation, user_id } = this;
+    const { id: report_id } = navigation.state.params;
 
-  handleThumbsUp (user_id, report_id) {
-    dispatch(thumbsUp(user_id, report_id));
+    dispatch(getThumbsupAndStar(report_id, user_id))
+  },
+  handleThumbsUp () {
+    const { user_id, navigation } = this;
+    const { id: report_id } = navigation.state.params;
+    if (!user_id) {
+      navigation.navigate('Login');
+    } else {
+      dispatch(thumbsUp(user_id, report_id));
+    }
+  },
+  handleCollect () {
+    const { user_id, navigation } = this;
+    const { id: report_id } = navigation.state.params;
+    if (!user_id) {
+      navigation.navigate('Login');
+    } else {
+      dispatch(collect(user_id, report_id));
+    }
   }
 });
 
