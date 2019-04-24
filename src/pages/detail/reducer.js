@@ -2,10 +2,13 @@ import { fromJS } from 'immutable';
 import {
   CHANGE_NUMS,
   CHANGE_THUMBSUP_STATE,
-  CHNAGE_COLLECT_STATE
+  CHNAGE_COLLECT_STATE,
+  CHANGE_DATEIL_INFO
 } from './actionTypes';
 
 const defaultState = fromJS({
+  loading: true,
+  detailInfo: {},
   thumbsUpNum: 0,
   thumbsUpState: false,
   collections: 0,
@@ -14,6 +17,13 @@ const defaultState = fromJS({
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_DATEIL_INFO:
+      console.log(action.value)
+      return state.merge({
+        loading: false,
+        detailInfo: fromJS(action.value)
+      });
+
     case CHANGE_NUMS:
       const { thumbsUps, collections, thumbsUped, collected } = action.value;
       return state.merge({

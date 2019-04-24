@@ -1,17 +1,34 @@
 import { 
   CHANGE_NUMS,
   CHANGE_THUMBSUP_STATE,
-  CHNAGE_COLLECT_STATE
+  CHNAGE_COLLECT_STATE,
+  CHANGE_DATEIL_INFO
 } from './actionTypes';
 import {
   toogleThumbsUp,
   thumbsupAndStar,
-  toogleCollection
+  toogleCollection,
+  detail
 } from '../../api';
 
 const changeThumbsUpState = () => ({
   type: CHANGE_THUMBSUP_STATE
 });
+
+const changeDetailInfo = data => ({
+  type: CHANGE_DATEIL_INFO,
+  value: data
+});
+
+export const getDeatilInfo = id => async dispatch => {
+  console.log('get detail...', id)
+  const { url } = detail;
+  const { _bodyText } = await fetch(`${url}?_id=${id}`);
+  const { success, data } = JSON.parse(_bodyText);
+  if (success) {
+    dispatch(changeDetailInfo(data))
+  }
+};
 
 export const thumbsUp = (user_id, report_id) => async (dispatch) => {
   const { method, url } = toogleThumbsUp;

@@ -1,19 +1,18 @@
-import React, { Component } from 'react'
-import ScrollableTabView from 'react-native-scrollable-tab-view'
+import React, { Component } from 'react';
+import ScrollableTabView from 'react-native-scrollable-tab-view';
 import {
-  StyleSheet,
   View,
   Text,
   Image,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
-  StatusBar
-} from 'react-native'
-import { connect } from 'react-redux'
-import Icon from 'react-native-vector-icons/Feather'
-import TabBar from './TabBar'
-import * as actionCreators from './actionCreators'
+  ActivityIndicator
+} from 'react-native';
+import { connect } from 'react-redux';
+import styles from './style';
+import Icon from 'react-native-vector-icons/Feather';
+import TabBar from './TabBar';
+import * as actionCreators from './actionCreators';
 
 class Home extends Component {
   tabs = ['每日舆情', '舆情报告', '舆情热评', '舆情研究']
@@ -77,11 +76,11 @@ class Home extends Component {
     )
   }
 
-  _renderItem = ({item: {_id, title, date, content, img_urls, description, image}}) => {
+  _renderItem = ({item: {_id, title, description, image}}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        onPress={() => this.handlePress(_id, title, date, img_urls, content)}
+        onPress={() => this.handlePress(_id)}
       >
         <View style={styles.item}>
           <View>
@@ -97,9 +96,6 @@ class Home extends Component {
               style={styles.renderItemImg}
               source={{uri: image}}
             />
-          </View>
-          <View>
-            <Text style={styles.date}>{date}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -166,89 +162,14 @@ class Home extends Component {
     getList(column, currentPage, this.num)
   }
 
-  handlePress = (id, title, date, img_urls, content) => {
-    const { navigation } = this.props
+  handlePress = id => {
+    const { navigation } = this.props;
+    console.log(id);
     navigation.navigate('Detail', {
-      id: id + '',
-      title,
-      date,
-      img_urls,
-      content
+      id: id + ''
     })
   }
 }
-
-const styles = StyleSheet.create({
-  HomeContainer: {
-    flex: 1,
-    backgroundColor: '#fff'
-  },
-  tabStyle: {
-    height: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  search: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    height: 40,
-    color: '#000',
-    paddingRight: 10,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-
-  // 每一项的样式
-  item: {
-    padding: 10
-  },
-  title: {
-    fontSize: 16,
-    lineHeight: 24,
-    fontWeight: "500",
-    color: '#444444'
-  },
-  descImg: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  description: {
-    marginRight: 20,
-    flex: 1,
-    height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlignVertical:'center',
-    fontSize: 14,
-    lineHeight: 24
-  },
-  renderItemImg: {
-    width: 100,
-    height: 70
-  },
-  date: {
-    fontSize: 12,
-    lineHeight: 20,
-    color: '#8590A6'
-  },
-  footer: {
-    flex: 1,
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'center'
-  },
-  loadingText: {
-    marginLeft: 10
-  },
-  separator: {
-    height: 10,
-    backgroundColor: '#F6F6F6'
-  }
-})
 
 const mapState = state => {
   console.log(state.getIn(['home', 'listData']).toJS())

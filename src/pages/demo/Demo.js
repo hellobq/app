@@ -1,76 +1,61 @@
+import React, {Component} from 'react';
 import {
-  View,
-  Text,
-  Animated,
-  Easing,
-  StyleSheet
+    TouchableHighlight,
+    StyleSheet,
+    Text,
+    View,
 } from 'react-native';
-import React, { Component } from 'react';
+import Toast, { DURATION } from 'react-native-easy-toast'
 
-class Demo extends Component {
-
-  state = {
-    marginLeft: new Animated.Value(0),
-    fontSize: new Animated.Value(30)
-  }
-
-  componentDidMount () {
-    const { marginLeft, fontSize } = this.state;
-
-    Animated.stagger(2000, [
-      Animated.timing(
-        marginLeft,
-        {
-          toValue: 100,
-          easing: Easing.ease,
-          duration: 1000
+export default class Demo extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+          position: 'bottom',
+          style:{},
         }
-      ),
+    }
 
-      Animated.spring(
-        fontSize,
-        {
-          toValue: 16,
-          riction: 2,   //弹跳系数
-          tension: 10,   // 控制速度
+    onClick(text, position, duration,withStyle) {
+        this.setState({
+            position: position,
+        })
+        if(withStyle){
+            this.refs.toastWithStyle.show(text, duration);
+        }else {
+            this.refs.toast.show(text, duration);
         }
-      )
-    ]).start();
-  }
+    }
 
-  render () {
-    const { marginLeft, fontSize } = this.state;
-    const marginLeftTeamp = marginLeft.interpolate({
-      inputRange: [0, 50, 100],
-      outputRange: [0, 100, 50]
-    })
-
-    return (
-      <View style={styles.container}>
-        <Animated.View style={{
-          marginLeft: marginLeftTeamp
-        }}>
-          <Text>demo</Text>
-        </Animated.View>
-
-        <Animated.Text style={{
-          fontSize
-        }}>demo</Animated.Text>
-      </View>
-    );
-  };
-};
+    getButton(text, position, duration,withStyle) {
+        return(
+            <TouchableHighlight
+                style={{padding: 10}}
+                onPress={()=>this.onClick(text, position, duration,withStyle)}>
+                <Text>{text}</Text>
+            </TouchableHighlight>
+        )
+    }
+    render() {
+        return (
+            <View style={styles.container}>
+                {this.getButton('LENGTH_SHORT+top', 'top', DURATION.LENGTH_SHORT)}
+                {this.getButton('LENGTH_SHORT+bottom', 'bottom', DURATION.LENGTH_SHORT)}
+                {this.getButton('LENGTH_LONG+top', 'top', DURATION.LENGTH_LONG)}
+                {this.getButton('LENGTH_LONG+bottom', 'bottom', DURATION.LENGTH_LONG)}
+                {this.getButton('LENGTH_LONG+bottom+custom style', 'bottom', DURATION.LENGTH_LONG,true)}
+                <Toast ref="toast" position={this.state.position}/>
+                <Toast ref="toastWithStyle" style={{backgroundColor:'red'}} position={this.state.position}/>
+            </View>
+        );
+    }
+}
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  text: {
-    fontSize: 20,
-    color: '#333'
-  }
-})
-
-export default Demo;
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+    },
+});

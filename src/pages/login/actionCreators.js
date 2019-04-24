@@ -2,7 +2,7 @@ import {
   CHANGE_USERINFO,
   CHANGE_LOGIN_ICON,
   CHANGE_MESSAGE,
-  CHANGE_TEXT_INPUT
+  CLEAR_TEXT_INPUT
 } from './actionTypes'
 import { login } from '../../api'
 
@@ -17,19 +17,21 @@ export const gotoLogin = (name, pwd) => async dispatch => {
   })
   
   const { success, message, user_id } = JSON.parse(_bodyText)
+  console.log(success, message, user_id);
+  
   dispatch(changeMessage(message, user_id))
   dispatch(showLoginIcon(false))
 }
 
-export const changeUserInfo = (text, idx) => ({
+export const changeUserInfo = (text, flagStr) => ({
   type: CHANGE_USERINFO,
   value: {
     text,
-    idx
+    flagStr
   }
 })
 
-export const showLoginIcon = (value = true) => ({
+export const showLoginIcon = (value) => ({
   type: CHANGE_LOGIN_ICON,
   value
 })
@@ -42,7 +44,7 @@ export const changeMessage = (message, user_id) => ({
   }
 })
 
-export const clearTextInput = idx => ({
-  type: CHANGE_TEXT_INPUT,
-  value: idx
+export const clearTextInput = flagStr => ({
+  type: CLEAR_TEXT_INPUT,
+  flagStr
 })

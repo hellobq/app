@@ -3,7 +3,7 @@ import {
   CHANGE_USERINFO,
   CHANGE_LOGIN_ICON,
   CHANGE_MESSAGE,
-  CHANGE_TEXT_INPUT
+  CLEAR_TEXT_INPUT
 } from './actionTypes'
 
 const userInfo = fromJS({
@@ -16,10 +16,11 @@ const userInfo = fromJS({
 
 export default (state = userInfo, action) => {
   switch (action.type) {
+
     case CHANGE_USERINFO:
-      const { text, idx } = action.value
+      const { text, flagStr } = action.value
       return state.set(
-        idx === 1 ? 'name' : 'pwd',
+        flagStr === 'username' ? 'name' : 'pwd',
         text 
       )
     
@@ -34,10 +35,9 @@ export default (state = userInfo, action) => {
         user_id
       });
 
-    case CHANGE_TEXT_INPUT:
-      console.log('clear....', action.value)
+    case CLEAR_TEXT_INPUT:
       return state.set(
-        action.value === 1 ? 'name' : 'pwd',
+        action.flagStr === 'username' ? 'name' : 'pwd',
         ''
       )
 

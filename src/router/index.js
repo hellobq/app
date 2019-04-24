@@ -2,10 +2,7 @@ import { createStackNavigator, createAppContainer } from 'react-navigation'
 import MainTabNavigator from './TabNavigator'
 import DetailScreen from '../pages/detail/Detail'
 import LoginScreen from '../pages/login/Login'
-import RegisterScreen from '../pages/login/Register'
-import ForgetScreen from '../pages/login/Forget'
-import SettingScreen from '../pages/setting/Setting'
-import AboutScreen from '../pages/setting/About'
+import ForgetScreen from '../pages/forget/Forget'
 
 const MainStack = createStackNavigator({
   Main: {
@@ -20,17 +17,8 @@ const MainStack = createStackNavigator({
   Login: {
     screen: LoginScreen
   },
-  Register: {
-    screen: RegisterScreen
-  },
   Forget: {
     screen: ForgetScreen
-  },
-  Setting: {
-    screen: SettingScreen
-  },
-  About: {
-    screen: AboutScreen
   }
 }, {
   initialRouteName: 'Main',

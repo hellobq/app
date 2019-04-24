@@ -7,11 +7,18 @@ import {
   TouchableOpacity,
   ActivityIndicator
 } from 'react-native'
+import {
+  changeUserInfo,
+  gotoLogin,
+  showLoginIcon,
+  clearTextInput,
+  changeMessage
+} from './actionCreators'
 import { connect } from 'react-redux'
-import { changeUserInfo, gotoLogin, showLoginIcon, clearTextInput } from './actionCreators'
+import Toast, { DURATION } from 'react-native-easy-toast'
 import Icon from 'react-native-vector-icons/Feather'
 import Close from './Close'
-
+import styles from './style';
 
 class Login extends Component {
 
@@ -26,15 +33,26 @@ class Login extends Component {
     }
   })
 
+  componentDidMount () {
+    console.log('login. mount...');
+  }
+
   componentDidUpdate () {
-    const { message, navigation } = this.props
-    if (message === 'ok') {
-      navigation.navigate('Main')
+    const { message, navigation, handleChangeMessage } = this.props
+    if (message) {
+      if (message === 'ok') {
+        // 登陆成功
+        navigation.navigate('Main')
+      } else {
+        // 有其他错误信息
+        this.refs.toastWithStyle.show(message, DURATION.LENGTH_LONG);
+        handleChangeMessage('');
+      }
     }
   }
 
   render () {
-    const { name, pwd, isLogining, handleLogin, message, handleChangeText, handleClear } = this.props
+    const { name, pwd, isLogining, handleLogin, handleChangeText, handleClear } = this.props
     return (
       <View style={styles.wrapper}>
 
@@ -47,16 +65,16 @@ class Login extends Component {
         <View style={styles.inputBox}>
           <TextInput
             style={styles.input}
-            placeholder="请输入用户名"
+            placeholder="用户名，没有会自动注册"
             selectionColor="#d81e06"
             value={name}
             underlineColorAndroid='transparent'
             spellCheck={false}
             ref={input => this.textInput1 = input}
-            onChangeText={text => handleChangeText(text, 1)}
+            onChangeText={text => handleChangeText(text, 'username')}
           ></TextInput>
           {
-            name.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear(1)} />
+            name.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear('username')} />
           }
         </View>
         <View style={styles.inputBox}>
@@ -68,10 +86,10 @@ class Login extends Component {
             value={pwd}
             style={styles.input}
             ref={input => this.textInput2 = input}
-            onChangeText={text => handleChangeText(text, 2)}
+            onChangeText={text => handleChangeText(text, 'password')}
           ></TextInput>
           {
-            pwd.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear(2)} />
+            pwd.length > 0 && <Close name='x' size={20} color={'#333'} close={() => handleClear('password')} />
           }
         </View>
 
@@ -102,22 +120,14 @@ class Login extends Component {
             activeOpacity={1}
             onPress={this.handleForget}
           >
-            <Text style={styles.proBlemText}>忘记密码 ?</Text>
-          </TouchableOpacity>
-          <View style={styles.separator}></View>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={this.handleRegister}
-          >
-            <Text style={styles.proBlemText}>用户注册</Text>
+            <Text style={styles.proBlemText}>已知用户名，忘记密码 ?</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Toast */}
+        <Toast ref="toastWithStyle" style={{backgroundColor:'red'}} position="bottom"/>
       </View>
     )
-  }
-  handleRegister = () => {
-    const { navigation } = this.props
-    navigation.navigate('Register')
   }
 
   handleForget = () => {
@@ -125,78 +135,6 @@ class Login extends Component {
     navigation.navigate('Forget')
   }
 }
-
-const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingTop: 30,
-    backgroundColor: '#fff'
-  },
-  header: {
-    height: 50,
-    lineHeight: 50
-  },
-  headerText: {
-    textAlign: 'center',
-    fontSize: 24,
-    letterSpacing: 1,
-    color: '#333'
-  },
-  inputBox: {
-    marginHorizontal: 20,
-    marginTop: 10,
-    marginBottom: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  input: {
-    flex: 1,
-    marginRight: 20,
-    color:'#333',
-    fontSize: 16
-  },
-  loginBtn: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginHorizontal: 20,
-    height: 48,
-    lineHeight: 48,
-    borderRadius: 24
-  },
-  loginText: {
-    marginLeft: 10,
-    color: '#fff',
-    fontSize: 20,
-    lineHeight: 48,
-    textAlign: 'center'
-  },
-  problems: {
-    marginTop: 20,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  proBlemText: {
-    color: '#3194d0',
-    paddingHorizontal: 10,
-    paddingTop: 5,
-    paddingBottom: 5,
-    fontSize: 14,
-    lineHeight: 20
-  },
-  separator: {
-    marginHorizontal: 10,
-    height: 14,
-    borderLeftWidth: 1,
-    borderLeftColor: '#ddd',
-    borderStyle: 'solid'
-  }
-})
 
 const mapState = state => {
   return {
@@ -208,18 +146,20 @@ const mapState = state => {
 }
 
 const mapDispatch = dispatch => ({
-  handleChangeText (text, idx) {
-    dispatch(changeUserInfo(text, idx))
+  handleChangeText (text, flagStr) {
+    dispatch(changeUserInfo(text, flagStr))
   },
   handleLogin (name, pwd) {
     if (name.replace(/\s+/g, '').length && pwd.replace(/\s+/g, '').length) {
-      dispatch(showLoginIcon())
+      dispatch(showLoginIcon(true))
       dispatch(gotoLogin(name, pwd))
     }
   },
-  
-  handleClear (idx) {
-    dispatch(clearTextInput(idx))
+  handleChangeMessage (msg) {
+    dispatch(changeMessage(msg))
+  },
+  handleClear (flagStr) {
+    dispatch(clearTextInput(flagStr))
   }
 })
 
