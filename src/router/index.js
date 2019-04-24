@@ -1,8 +1,9 @@
-import { createStackNavigator, createAppContainer } from 'react-navigation'
-import MainTabNavigator from './TabNavigator'
-import DetailScreen from '../pages/detail/Detail'
-import LoginScreen from '../pages/login/Login'
-import ForgetScreen from '../pages/forget/Forget'
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import MainTabNavigator from './TabNavigator';
+import DetailScreen from '../pages/detail/Detail';
+import LoginScreen from '../pages/login/Login';
+import ForgetScreen from '../pages/forget/Forget';
+import AboutMeScreen from '../pages/about-me/AboutMe';
 
 const MainStack = createStackNavigator({
   Main: {
@@ -19,6 +20,9 @@ const MainStack = createStackNavigator({
   },
   Forget: {
     screen: ForgetScreen
+  },
+  AboutMe: {
+    screen: AboutMeScreen
   }
 }, {
   initialRouteName: 'Main',

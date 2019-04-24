@@ -1,23 +1,22 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+  Keyboard,
   TextInput,
   TouchableOpacity,
   ActivityIndicator
-} from 'react-native'
+} from 'react-native';
 import {
   changeUserInfo,
   gotoLogin,
   showLoginIcon,
   clearTextInput,
   changeMessage
-} from './actionCreators'
-import { connect } from 'react-redux'
-import Toast, { DURATION } from 'react-native-easy-toast'
-import Icon from 'react-native-vector-icons/Feather'
-import Close from './Close'
+} from './store/actionCreators';
+import { connect } from 'react-redux';
+import Toast, { DURATION } from 'react-native-easy-toast';
+import Close from './Close';
 import styles from './style';
 
 class Login extends Component {
@@ -42,6 +41,7 @@ class Login extends Component {
     if (message) {
       if (message === 'ok') {
         // 登陆成功
+        console.log('login 成功');
         navigation.navigate('Main')
       } else {
         // 有其他错误信息
@@ -151,6 +151,7 @@ const mapDispatch = dispatch => ({
   },
   handleLogin (name, pwd) {
     if (name.replace(/\s+/g, '').length && pwd.replace(/\s+/g, '').length) {
+      Keyboard.dismiss();
       dispatch(showLoginIcon(true))
       dispatch(gotoLogin(name, pwd))
     }

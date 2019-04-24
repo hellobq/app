@@ -11,8 +11,9 @@ import {
   changeUserNums
 } from './store/actionCreators';
 import {
-  changeMessage
-} from '../login/actionCreators';
+  changeMessage,
+  clearTextInput
+} from '../login/store/actionCreators';
 import { is } from 'immutable';
 import styles from './style';
 
@@ -26,9 +27,7 @@ class My extends Component {
 
   render () {
     let { name, message, data } = this.props;
-    const { collections, views, thumbs_ups } = data.toJS();
-
-    console.log('My 渲染了...', name, message, collections, views)
+    const { collections, views, thumbs_ups, id } = data.toJS();
     return (
       <View style={styles.container}>
         <TouchableOpacity
@@ -52,6 +51,7 @@ class My extends Component {
           <TouchableOpacity
             style={styles.item}
             activeOpacity={0.6}
+            onPress={() => this.props.handleItemClick('我赞过的', id)}
           >
             <View style={styles.iconBox}>
               <Icon
@@ -69,6 +69,7 @@ class My extends Component {
           <TouchableOpacity
             style={styles.item}
             activeOpacity={0.6}
+            onPress={() => this.props.handleItemClick('收藏集', id)}
           >
             <View style={styles.iconBox}>
               <Icon
@@ -86,6 +87,7 @@ class My extends Component {
           <TouchableOpacity
             style={styles.item}
             activeOpacity={0.6}
+            onPress={() => this.props.handleItemClick('我阅读过的', id)}
           >
             <View style={styles.iconBox}>
               <Icon
@@ -134,11 +136,11 @@ const mapState = state => ({
   name: state.getIn(['user', 'name']),
   message: state.getIn(['user', 'message']),
   data: state.getIn(['my', 'data'])
-})
+});
 
 const mapDispatch = dispatch => ({
   handleLoginSuccess (name) {
-    dispatch(getUserNums(name))
+    dispatch(getUserNums(name));
   },
   handleReg () {
     const { navigation, message } = this;
@@ -148,13 +150,22 @@ const mapDispatch = dispatch => ({
   },
   handleClickSetting () {
     const { navigation } = this;
-    navigation.navigate('Setting')
+    navigation.navigate('Setting');
   },
   handleLayout () {
-    console.log('退出帐号...');
     dispatch(changeUserNums({}));
     dispatch(changeMessage(''));
+    dispatch(clearTextInput('username'));
+    dispatch(clearTextInput('password'));
+  },
+  handleItemClick (title, id) {
+    const { navigation } = this;
+    console.log(title);
+    navigation.navigate('AboutMe', {
+      title,
+      id
+    })
   }
-})
+});
 
-export default connect(mapState, mapDispatch)(My)
+export default connect(mapState, mapDispatch)(My);

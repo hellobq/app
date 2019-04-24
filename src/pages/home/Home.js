@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import styles from './style';
 import Icon from 'react-native-vector-icons/Feather';
 import TabBar from './TabBar';
+import { is } from 'immutable';
 import * as actionCreators from './actionCreators';
 
 class Home extends Component {
@@ -23,8 +24,19 @@ class Home extends Component {
     activeTab: 0
   }
 
+  shouldComponentUpdate (nextProps) {
+    const { listData: oldListData } = this.props;
+    const { listData: newListData } = nextProps;
+    return !is(newListData, oldListData) || 
+      this.props.dayNewsPage !== nextProps.dayNewsPage ||
+      this.props.reportsPage !== nextProps.reportsPage || 
+      this.props.commentsPage !== nextProps.commentsPage ||
+      this.props.stydiesPage !== nextProps.stydiesPage
+  } 
+
   render () {
-    const { listData } = this.props
+    const { listData } = this.props;
+    console.log(1);
 
     return (
       <View style={styles.HomeContainer}>
@@ -171,18 +183,14 @@ class Home extends Component {
   }
 }
 
-const mapState = state => {
-  console.log(state.getIn(['home', 'listData']).toJS())
-  return {
-    listData: state.getIn(['home', 'listData']).toJS(),
-
-    // 每类舆情的页码
-    dayNewsPage: state.getIn(['home', 'dayNewsPage']),
-    reportsPage: state.getIn(['home', 'reportsPage']),
-    commentsPage: state.getIn(['home', 'commentsPage']),
-    stydiesPage: state.getIn(['home', 'stydiesPage'])
-  }
-}
+const mapState = state => ({
+  listData: state.getIn(['home', 'listData']).toJS(),
+  // 每类舆情的页码
+  dayNewsPage: state.getIn(['home', 'dayNewsPage']),
+  reportsPage: state.getIn(['home', 'reportsPage']),
+  commentsPage: state.getIn(['home', 'commentsPage']),
+  stydiesPage: state.getIn(['home', 'stydiesPage'])
+});
 
 const mapDispatch = dispatch => ({
   getList (type, page, num) {

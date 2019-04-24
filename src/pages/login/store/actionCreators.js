@@ -4,7 +4,7 @@ import {
   CHANGE_MESSAGE,
   CLEAR_TEXT_INPUT
 } from './actionTypes'
-import { login } from '../../api'
+import { login } from '../../../api'
 
 export const gotoLogin = (name, pwd) => async dispatch => {
   const { method, url } = login
