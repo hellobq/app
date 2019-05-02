@@ -6,18 +6,19 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
+  StatusBar
 } from 'react-native';
 import { connect } from 'react-redux';
 import styles from './style';
 import Icon from 'react-native-vector-icons/Feather';
 import TabBar from './TabBar';
 import { is } from 'immutable';
-import * as actionCreators from './actionCreators';
+import * as actionCreators from './store/actionCreators';
 
 class Home extends Component {
   tabs = ['每日舆情', '舆情报告', '舆情热评', '舆情研究']
-  num = 10
+  num = 40
   tabTemps = ['daily-report', 'hot-report', 'hot-comment', 'yanjiu']
 
   state = {
@@ -32,15 +33,27 @@ class Home extends Component {
       this.props.reportsPage !== nextProps.reportsPage || 
       this.props.commentsPage !== nextProps.commentsPage ||
       this.props.stydiesPage !== nextProps.stydiesPage
-  } 
+  }
+
+  componentDidUpdate () {
+    console.log('已更新...');
+    let { listData } = this.props;
+    const { activeTab } = this.state
+    listData = listData.toJS();
+    console.log(listData[this.tabTemps[activeTab]].length);
+    listData[this.tabTemps[activeTab]].length && this.flatList.scrollToIndex({
+      index: 0,
+      viewPosition: 0
+    })
+  }
 
   render () {
-    const { listData } = this.props;
-    console.log(1);
-
+    let { listData } = this.props;
+    listData = listData.toJS();
+    console.log('home 渲染了...')
     return (
       <View style={styles.HomeContainer}>
-        {/* <StatusBar backgroundColor='#fff' barStyle='dark-content'/> */}
+        <StatusBar backgroundColor='#fff' barStyle='dark-content'/>
         <ScrollableTabView 
           renderTabBar={props => <TabBar {...props}/>} 
           onChangeTab={this.handleChangeTab}
@@ -59,14 +72,22 @@ class Home extends Component {
                   ListFooterComponent={this._listFootComponent}
                   ItemSeparatorComponent={this._separatorComponent}
                   onEndReached={this.handleEndReached}
-                  onEndReachedThreshold={.02}
+                  onEndReachedThreshold={0.01}
+                  ref={flatList => this.flatList = flatList}
+                  onScrollToIndexFailed={()=>{}}
                 />
               </View>
             ))
           }
         </ScrollableTabView>
         <View style={styles.search}>
-          <Icon name={'search'} size={24} color={'#333'} />
+          <TouchableOpacity
+            style={styles.topRightBtn}
+            activeOpacity={0.2}
+            onPress={() => this.props.handleTopRightBtn()}
+          >
+            <Icon name={'search'} size={24} color={'#333'}/>
+          </TouchableOpacity>
         </View>
       </View>
     )
@@ -124,8 +145,9 @@ class Home extends Component {
   }
 
   handleChangeTab = ({ i }) => {
-    const { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
-    let currentPage, column = this.tabTemps[i]
+    let { listData, getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
+    let currentPage, column = this.tabTemps[i];
+    listData = listData.toJS();
 
     this.setState(() => ({
       activeTab: i
@@ -151,7 +173,11 @@ class Home extends Component {
     })
   }
 
-  handleEndReached = () => {
+  handleEndReached = ({distanceFromEnd}) => {
+    console.log('达到最底部...', distanceFromEnd);
+    // if (distanceFromEnd < 0) {
+    //   return;
+    // }
     const { getList, dayNewsPage, reportsPage, commentsPage, stydiesPage } = this.props
     const { activeTab } = this.state
     let currentPage, column = this.tabTemps[activeTab]
@@ -176,7 +202,6 @@ class Home extends Component {
 
   handlePress = id => {
     const { navigation } = this.props;
-    console.log(id);
     navigation.navigate('Detail', {
       id: id + ''
     })
@@ -184,7 +209,7 @@ class Home extends Component {
 }
 
 const mapState = state => ({
-  listData: state.getIn(['home', 'listData']).toJS(),
+  listData: state.getIn(['home', 'listData']),
   // 每类舆情的页码
   dayNewsPage: state.getIn(['home', 'dayNewsPage']),
   reportsPage: state.getIn(['home', 'reportsPage']),
@@ -195,6 +220,11 @@ const mapState = state => ({
 const mapDispatch = dispatch => ({
   getList (type, page, num) {
     dispatch(actionCreators.getList(type, page, num))
+  },
+  handleTopRightBtn () {
+    console.log('搜索...');
+    const { navigation } = this;
+    navigation.navigate('Search');
   }
 })
 

@@ -33,10 +33,22 @@ const toogleThumbsUp = {
   desc: '详情页点赞'
 }
 
+const getCollectionList = {
+  method: 'get',
+  url: baseURL + '/getCollectionList',
+  desc: '获取收藏列表'
+}
+
 const getThumbsUpList = {
   method: 'get',
   url: baseURL + '/getThumbsUpList',
   desc: '获取用户的点赞列表'
+}
+
+const getViewsList = {
+  method: 'get',
+  url: baseURL + '/getViewsList',
+  desc: '获取阅读历史'
 }
 
 const toogleCollection = {
@@ -62,6 +74,12 @@ const comment = {
   desc: '用户评论'
 }
 
+const search = {
+  method: 'get',
+  url: baseURL + '/search',
+  desc: '实时搜索'
+}
+
 export {
   login,
   resetPwd,
@@ -72,6 +90,9 @@ export {
   thumbsupAndStar,
   user,
   comment,
-  getThumbsUpList
+  getThumbsUpList,
+  getCollectionList,
+  getViewsList,
+  search
 }
 

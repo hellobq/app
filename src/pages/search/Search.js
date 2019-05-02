@@ -12,11 +12,13 @@ import {
   changeSearchText,
   requestData
 } from './store/actionCreators';
+import { is } from 'immutable';
 
 class Demo extends Component {
 
-  static navigationOptions = {
-    header: null,
+  shouldComponentUpdate ({value: newVal, data: newData}) {
+    const { value: oldVal, data: oldData } = this.props;
+    return newVal !== oldVal || !is(newData, oldData);
   }
 
   render () {
@@ -39,6 +41,7 @@ class Demo extends Component {
               underlineColorAndroid='transparent'
               spellCheck={false}
               value={value}
+              autoFocus={true}
               onChangeText={text => this.props.handleSearchText(text)}
             ></TextInput>
             {
@@ -52,15 +55,14 @@ class Demo extends Component {
                 </TouchableOpacity>
             }
           </View>
-          <Text style={styles.searchText}>搜索</Text>
         </View>
         <View style={styles.searchResult}>
           {
             data.length > 0 && data.map(({ _id, title }) => (
               <TouchableOpacity
                 key={_id}
-                activeOpacity={0.2}
-                onPress={() => {}}
+                activeOpacity={0.8}
+                onPress={() => this.props.handleItemClick(_id)}
                 style={styles.searchResultItem}
               >
                 <Text style={styles.searchResultItemText}>{title}</Text>
@@ -91,6 +93,12 @@ const mapDispatch = dispatch => ({
   },
   handleClearSearchText () {
     dispatch(changeSearchText(''));
+  },
+  handleItemClick (id) {
+    const { navigation } = this;
+    navigation.navigate('Detail', {
+      id: id + ''
+    })
   }
 });
 

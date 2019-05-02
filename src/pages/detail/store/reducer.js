@@ -3,7 +3,8 @@ import {
   CHANGE_NUMS,
   CHANGE_THUMBSUP_STATE,
   CHNAGE_COLLECT_STATE,
-  CHANGE_DATEIL_INFO
+  CHANGE_DATEIL_INFO,
+  CHANGE_LOADING_STATUS
 } from './actionTypes';
 
 const defaultState = fromJS({
@@ -17,8 +18,10 @@ const defaultState = fromJS({
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_LOADING_STATUS:
+      return state.set('loading', action.value);
+
     case CHANGE_DATEIL_INFO:
-      console.log(action.value)
       return state.merge({
         loading: false,
         detailInfo: fromJS(action.value)

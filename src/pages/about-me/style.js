@@ -2,6 +2,18 @@ import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
   container: {
+    flex: 1
+  },
+  noLoginBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  noLoginText: {
+    fontSize: 18,
+    color: '#d81e06'
+  },
+  statusBox: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'

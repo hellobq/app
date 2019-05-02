@@ -2,14 +2,15 @@ import {
   CHANGE_NUMS,
   CHANGE_THUMBSUP_STATE,
   CHNAGE_COLLECT_STATE,
-  CHANGE_DATEIL_INFO
+  CHANGE_DATEIL_INFO,
+  CHANGE_LOADING_STATUS
 } from './actionTypes';
 import {
   toogleThumbsUp,
   thumbsupAndStar,
   toogleCollection,
   detail
-} from '../../api';
+} from '../../../api';
 
 const changeThumbsUpState = () => ({
   type: CHANGE_THUMBSUP_STATE
@@ -20,11 +21,11 @@ const changeDetailInfo = data => ({
   value: data
 });
 
-export const getDeatilInfo = id => async dispatch => {
-  console.log('get detail...', id)
+export const getDetailInfo = report_id => async dispatch => {
   const { url } = detail;
-  const { _bodyText } = await fetch(`${url}?_id=${id}`);
+  const { _bodyText } = await fetch(`${url}?report_id=${report_id}`);
   const { success, data } = JSON.parse(_bodyText);
+  console.log(report_id, success, data);
   if (success) {
     dispatch(changeDetailInfo(data))
   }
@@ -76,17 +77,25 @@ export const collect = (user_id, report_id) => async dispatch => {
   }
 };
 
-export const getThumbsupAndStar = (report_id, user_id) => async dispatch => {
-  const { url } = thumbsupAndStar;
-  try {
-    const { _bodyText } = await fetch(`${url}?report_id=${report_id}&user_id=${user_id}`);
-    const { success, thumbsUps, collections, thumbsUped, collected } = JSON.parse(_bodyText);
+export const changeLoadingStatus = bool => ({
+  type: CHANGE_LOADING_STATUS,
+  value: bool
+});
 
-    if (success) {
-      dispatch(changeNums(thumbsUps, collections, thumbsUped, collected))
-    }
-  } catch(e) {
-    console.log('获取点赞数和收藏数出错...', e)
+export const getThumbsupAndStarNum = (report_id, user_id) => async dispatch => {
+  const { url } = thumbsupAndStar;
+  const { _bodyText } = await fetch(`${url}?report_id=${report_id}&user_id=${user_id}`);
+  const { success, thumbsUps, collections, thumbsUped, collected } = JSON.parse(_bodyText);
+
+  if (success) {
+    console.log('获取的点赞和收藏的数据：....', thumbsUps, collections, thumbsUped, collected);
+    dispatch(
+      changeNums(
+        thumbsUps,
+        collections,
+        thumbsUped,
+        collected
+      )
+    )
   }
-  
 };

@@ -1,5 +1,5 @@
 import { SET_LIST } from './actionTypes';
-import { list } from '../../api';
+import { list } from '../../../api';
 
 export const getList = (type, page, num) => async dispatch => {
   const { url } = list;
@@ -7,6 +7,7 @@ export const getList = (type, page, num) => async dispatch => {
   try {
     const { _bodyText } = await fetch(`${url}?type=${type}&page=${page}&num=${num}`);
     const { success, data } = JSON.parse(_bodyText);
+    console.log(success, data);
     if (success) {
       dispatch({
         type: SET_LIST,

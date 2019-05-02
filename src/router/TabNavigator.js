@@ -24,7 +24,7 @@ class MainTabNavigator extends Component {
       selectedIcon: require("../assets/images/i_mine_foc.png"),
       Component: Demo
     }],
-    selectedTabTitle: '我的'
+    selectedTabTitle: '首页'
   }
 
   render () {

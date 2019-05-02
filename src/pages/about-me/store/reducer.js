@@ -6,7 +6,10 @@ import { fromJS } from 'immutable';
 
 const aboutMeState = fromJS({
   list: [],
-  status: false
+  status: false,
+  page: 1,
+  num: 10,
+  hasCompleted: false
 });
 
 export default (state = aboutMeState, action) => {
@@ -15,7 +18,13 @@ export default (state = aboutMeState, action) => {
       return state.set('status', action.value);
 
     case CHANGE_ABOUTME_LIST:
-      return state.set('list', action.value);
+      const { data, loadingStatus, hasCompleted }=  action.value;
+      return state.merge({
+        list: data,
+        status: loadingStatus,
+        hasCompleted,
+        page: !hasCompleted && ++page
+      });
 
     default:
       return state;

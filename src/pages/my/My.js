@@ -153,10 +153,13 @@ const mapDispatch = dispatch => ({
     navigation.navigate('Setting');
   },
   handleLayout () {
-    dispatch(changeUserNums({}));
-    dispatch(changeMessage(''));
-    dispatch(clearTextInput('username'));
-    dispatch(clearTextInput('password'));
+    const { message, data } = this;
+    if (message === 'ok' && !data.toJS().comments) {
+      dispatch(changeUserNums({}));
+      dispatch(changeMessage(''));
+      dispatch(clearTextInput('username'));
+      dispatch(clearTextInput('password'));
+    }
   },
   handleItemClick (title, id) {
     const { navigation } = this;

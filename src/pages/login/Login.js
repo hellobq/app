@@ -22,14 +22,7 @@ import styles from './style';
 class Login extends Component {
 
   static navigationOptions = ({navigation}) => ({
-    headerTitle: '',
-    headerRight: <Close name='x' size={24} color={'#ccc'} close={navigation.goBack} />,
-    headerLeft: null,
-    headerRightContainerStyle: {
-      margin: 4,
-      padding: 10,
-      fontSize: 20
-    }
+    headerRight: <Close name='x' size={24} color={'#ccc'} close={navigation.goBack}/>
   })
 
   componentDidMount () {

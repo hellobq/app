@@ -9,38 +9,44 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import {
-  requestData
+  requestData,
+  changeLoadingStatus
 } from './store/actionCreators';
 import styles from './style';
 
 class AboutMe extends Component {
+
   static navigationOptions = ({navigation}) => ({
     headerTitle: navigation.state.params.title,
   })
 
   componentDidMount () {
-    const { status, navigation, handleComponentMount } = this.props;
-    const { id = "5c8e0c19258ddc2b84435ee1" } = navigation.state.params;
-    // if (id) {
-      handleComponentMount(id);
-    // }
+    const { status, navigation, handleComponentMount, page, num } = this.props;
+    const { id, title } = navigation.state.params;
+    if (id) {
+      handleComponentMount(id, title, page, num);
+    }
+  }
+
+  componentWillUnmount () {
+    const { handleWillUnmount } = this.props;
+    handleWillUnmount();
   }
 
   render () {
     const { status, navigation, list } = this.props;
-    const { id = "5c8e0c19258ddc2b84435ee1" } = navigation.state.params;
-    console.log(status);
+    const { id } = navigation.state.params;
     const hasGetList = () => status
       ? <FlatList
           data={list}
-          keyExtractor={this._keyExractor}
+          keyExtractor={({_id}) => _id}
           renderItem={this._renderItem}
-          // ListFooterComponent={this._listFootComponent}
+          ListFooterComponent={this._listFootComponent}
           ItemSeparatorComponent={this._separatorComponent}
           onEndReached={this.handleEndReached}
           onEndReachedThreshold={.02}
         />
-      : <View>
+      : <View style={styles.statusBox}>
           <ActivityIndicator
             size="large"
             color='#8590A6'
@@ -48,22 +54,37 @@ class AboutMe extends Component {
         </View>
 
     return (
-      <View class={styles.container}>
+      <View style={styles.container}>
         {
-          !id ? <View><Text>未登录...</Text></View> : hasGetList()
+          !id
+            ? <View style={styles.noLoginBox}>
+                <Text style={styles.noLoginText}>暂未登录...</Text>
+              </View>
+            : hasGetList()
         }
       </View>
     );
   }
 
-  _keyExractor = ({_id}, idx) => _id + idx
+  _listFootComponent = () => {
+    const { status, hasCompleted } = this.props;
+    return (
+      status && !hasCompleted ?
+      <View style={styles.footer}>
+        <ActivityIndicator
+          size="small"
+          color='#8590A6'
+        />
+        <Text style={styles.loadingText}>加载中...</Text>
+      </View> : null
+    )
+  }
 
-  
-  _renderItem = ({item: { report: {_id, title, description, image} }}) => {
+  _renderItem = ({item: { date, report: {title, description, image} }}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
-        // onPress={() => this.handlePress(_id)}
+        onPress={() => this.props.handlePress(_id)}
       >
         <View style={styles.item}>
           <View>
@@ -80,6 +101,9 @@ class AboutMe extends Component {
               source={{uri: image}}
             />
           </View>
+          <View>
+            <Text style={styles.date}>{date}</Text>
+          </View>
         </View>
       </TouchableOpacity>
     )
@@ -90,18 +114,34 @@ class AboutMe extends Component {
   )
 
   handleEndReached = () => {
-    console.log('到底了...');
+    const { handleComponentMount, hasCompleted, navigation, page, num } = this.props;
+    const { id, title } = navigation.state.params;
+    if (!hasCompleted) {
+      handleComponentMount(id, title, page, num);
+    }
   }
 };
 
 const mapState = state => ({
   status: state.getIn(['aboutMe', 'status']),
-  list: state.getIn(['aboutMe', 'list'])
+  list: state.getIn(['aboutMe', 'list']),
+  page: state.getIn(['aboutMe', 'page']),
+  num: state.getIn(['aboutMe', 'num']),
+  hasCompleted: state.getIn(['aboutMe', 'hasCompleted'])
 });
 
 const mapDispatch = dispatch => ({
-  handleComponentMount (id) {
-    dispatch(requestData(id));
+  handleComponentMount (id, title, page, num) {
+    dispatch(requestData(id, title, page, num));
+  },
+  handleWillUnmount () {
+    dispatch(changeLoadingStatus(false));
+  },
+  handlePress (id) {
+    const { navigation } = this;
+    navigation.navigate('Detail', {
+      id: id + ''
+    })
   }
 });
 

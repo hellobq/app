@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react'
+import React, { Component, Fragment } from 'react';
 import {
   View,
   Text,
@@ -6,22 +6,19 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator
-} from 'react-native'
-import Icon from 'react-native-vector-icons/Feather'
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import styles from './style';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import {
   thumbsUp,
   collect,
-  getThumbsupAndStar,
-  getDeatilInfo
-} from './actionCreators'
+  getThumbsupAndStarNum,
+  getDetailInfo,
+  changeLoadingStatus
+} from './store/actionCreators';
 
 class Detail extends Component {
-
-  static navigationOptions = ({navigation}) => ({
-    headerTitle: '文章详情页',
-  })
 
   render () {
     const { thumbsUpNum, collections, thumbsUpState, collectionState, detailInfo, loading } = this.props
@@ -122,10 +119,20 @@ class Detail extends Component {
 
   componentDidMount () {
     console.log('进入详情页 mounted...')
-    const { navigation, getDeatil } = this.props;
-    const { id } = navigation.state.params;
-    getDeatil(id);
-    // this.props.handleComponentMount();
+    const { 
+      navigation: {state: {params: { id: report_id}}},
+      user_id,
+      getDeatil,
+      getThumbsupAndStar
+    } = this.props;
+    getDeatil(report_id);
+    getThumbsupAndStar(report_id, user_id);
+  }
+
+  componentWillUnmount () {
+    console.log('组件卸载...');
+    const { handleWillUnmount } = this.props;
+    handleWillUnmount();
   }
 }
 
@@ -142,14 +149,14 @@ const mapState = state => ({
 });
 
 const mapDispatch = dispatch => ({
-  getDeatil (id) {
-    dispatch(getDeatilInfo(id))
+  handleWillUnmount () {
+    dispatch(changeLoadingStatus(true));
   },
-  handleComponentMount () {
-    const { navigation, user_id } = this;
-    const { id: report_id } = navigation.state.params;
-
-    dispatch(getThumbsupAndStar(report_id, user_id))
+  getDeatil (report_id) {
+    dispatch(getDetailInfo(report_id));
+  },
+  getThumbsupAndStar (report_id, user_id) {
+    dispatch(getThumbsupAndStarNum(report_id, user_id));
   },
   handleThumbsUp () {
     const { user_id, navigation } = this;

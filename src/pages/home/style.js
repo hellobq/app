@@ -17,14 +17,20 @@ export default StyleSheet.create({
     right: 0,
     height: 40,
     color: '#000',
-    paddingRight: 10,
+    paddingHorizontal: 10,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  topRightBtn: {
+    // backgroundColor: 'red'
   },
 
   // 每一项的样式
   item: {
-    padding: 10
+    padding: 10,
+    height: 150,
+    justifyContent: 'center',
+    // backgroundColor: 'pink'
   },
   title: {
     fontSize: 16,
@@ -35,6 +41,7 @@ export default StyleSheet.create({
   descImg: {
     paddingTop: 4,
     paddingBottom: 4,
+    height: 70,
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
