@@ -3,14 +3,16 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { connect } from 'react-redux';
 import styles from './style';
 import {
   changeSearchText,
-  requestData
+  requestData,
+  changeRequestData
 } from './store/actionCreators';
 import { is } from 'immutable';
 
@@ -18,7 +20,7 @@ class Demo extends Component {
 
   shouldComponentUpdate ({value: newVal, data: newData}) {
     const { value: oldVal, data: oldData } = this.props;
-    return newVal !== oldVal || !is(newData, oldData);
+    return Platform.OS !== 'ios' || newVal !== oldVal || !is(newData, oldData);
   }
 
   render () {
@@ -37,10 +39,12 @@ class Demo extends Component {
             <TextInput
               style={styles.input}
               placeholder="请输入密码"
+              keyboardType='default'
               selectionColor="#d81e06"
               underlineColorAndroid='transparent'
               spellCheck={false}
               value={value}
+              defaultValue=''
               autoFocus={true}
               onChangeText={text => this.props.handleSearchText(text)}
             ></TextInput>
@@ -73,6 +77,12 @@ class Demo extends Component {
       </View>
     )
   }
+
+  componentWillUnmount () {
+    const { handleClearSearchText, handleClearSearchData } = this.props;
+    handleClearSearchText();
+    handleClearSearchData();
+  }
 }
 
 const mapState = state => ({
@@ -93,6 +103,9 @@ const mapDispatch = dispatch => ({
   },
   handleClearSearchText () {
     dispatch(changeSearchText(''));
+  },
+  handleClearSearchData () {
+    dispatch(changeRequestData([]));
   },
   handleItemClick (id) {
     const { navigation } = this;

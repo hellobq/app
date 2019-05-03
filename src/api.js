@@ -1,5 +1,5 @@
 const 
-  ip_goal = '192.168.199.166', // 192.168.43.19
+  ip_goal = '192.168.199.166',
   port = '4321',
   baseURL = `http://${ip_goal}:${port}/api`;
 
@@ -63,9 +63,9 @@ const thumbsupAndStar = {
   desc: '详情页获取点赞和收藏数'
 }
 
-const user = {
+const viewCollectionThumbUps = {
   method: 'get',
-  url: baseURL + '/user',
+  url: baseURL + '/viewCollectionThumbUps',
   desc: '获取我的页面相关用户信息'
 }
 const comment = {
@@ -88,7 +88,7 @@ export {
   toogleThumbsUp,
   toogleCollection,
   thumbsupAndStar,
-  user,
+  viewCollectionThumbUps,
   comment,
   getThumbsUpList,
   getCollectionList,

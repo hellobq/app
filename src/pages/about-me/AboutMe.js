@@ -23,6 +23,7 @@ class AboutMe extends Component {
   componentDidMount () {
     const { status, navigation, handleComponentMount, page, num } = this.props;
     const { id, title } = navigation.state.params;
+    console.log('mount', id, title);
     if (id) {
       handleComponentMount(id, title, page, num);
     }
@@ -35,7 +36,7 @@ class AboutMe extends Component {
 
   render () {
     const { status, navigation, list } = this.props;
-    const { id } = navigation.state.params;
+    const { id, title } = navigation.state.params;
     const hasGetList = () => status
       ? <FlatList
           data={list}
@@ -80,7 +81,7 @@ class AboutMe extends Component {
     )
   }
 
-  _renderItem = ({item: { date, report: {title, description, image} }}) => {
+  _renderItem = ({item: { date, report: {_id, title, description, image} }}) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
@@ -132,6 +133,7 @@ const mapState = state => ({
 
 const mapDispatch = dispatch => ({
   handleComponentMount (id, title, page, num) {
+    console.log('handleMount', id, title);
     dispatch(requestData(id, title, page, num));
   },
   handleWillUnmount () {

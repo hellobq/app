@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  ScrollView,
+  RefreshControl,
   TouchableOpacity
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { connect } from 'react-redux';
 import {
   getUserNums,
-  changeUserNums
+  changeUserNums,
+  changeRefreshStatus
 } from './store/actionCreators';
 import {
   changeMessage,
@@ -20,16 +23,25 @@ import styles from './style';
 class My extends Component {
 
   shouldComponentUpdate (nextProps) {
-    const { data, message } = this.props;
-    const { data: nextData, message: nextMsg } = nextProps;
-    return !is(nextMsg, message) || !is(nextData, data);
+    const { data, message, refreshing } = this.props;
+    const { data: nextData, message: nextMsg, refreshing: newRefreshing } = nextProps;
+    return !is(nextMsg, message) || !is(nextData, data) || refreshing !== newRefreshing;
   }
 
   render () {
-    let { name, message, data } = this.props;
+    let { name, message, data, refreshing } = this.props;
     const { collections, views, thumbs_ups, id } = data.toJS();
     return (
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={this.handleRefresh}
+            colors={['#d81e06']}
+          />
+        }
+      >
         <TouchableOpacity
           style={styles.header}
           activeOpacity={0.8}
@@ -62,7 +74,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>我赞过的</Text>
-              <Text style={styles.itemNum}>{ thumbs_ups ? thumbs_ups.length : 0 }篇</Text>
+              <Text style={styles.itemNum}>{ thumbs_ups || 0 }篇</Text>
             </View>
           </TouchableOpacity>
 
@@ -80,7 +92,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>收藏集</Text>
-              <Text style={styles.itemNum}>{ collections ? collections.length : 0 }篇</Text>
+              <Text style={styles.itemNum}>{ collections || 0 }篇</Text>
             </View>
           </TouchableOpacity>
 
@@ -98,7 +110,7 @@ class My extends Component {
             </View>
             <View style={styles.textBox}>
               <Text style={styles.itemText}>阅读过的文章</Text>
-              <Text style={styles.itemNum}>{ views ? views.length : 0 }篇</Text>
+              <Text style={styles.itemNum}>{ views || 0 }篇</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity
@@ -113,7 +125,7 @@ class My extends Component {
             <Text style={styles.layoutText}>退出当前帐号</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 
@@ -130,15 +142,35 @@ class My extends Component {
       handleLoginSuccess(name);
     }
   }
+
+  handleRefresh = () => {
+    const {
+      name,
+      message,
+      handleLoginSuccess,
+      handleChangeRefreshStatus,
+      data
+    } = this.props;
+
+    // 用户登陆后，重新刷新得到相关数据
+    if (message === 'ok' && name && !data.toJS().comments) {
+      handleLoginSuccess(name);
+      handleChangeRefreshStatus(true);
+    }
+  }
 }
 
 const mapState = state => ({
   name: state.getIn(['user', 'name']),
   message: state.getIn(['user', 'message']),
-  data: state.getIn(['my', 'data'])
+  data: state.getIn(['my', 'data']),
+  refreshing: state.getIn(['my', 'refreshing'])
 });
 
 const mapDispatch = dispatch => ({
+  handleChangeRefreshStatus (bool) {
+    dispatch(changeRefreshStatus(bool));
+  },
   handleLoginSuccess (name) {
     dispatch(getUserNums(name));
   },

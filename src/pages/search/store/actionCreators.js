@@ -21,7 +21,7 @@ export const changeSearchText = text => ({
   value: text
 });
 
-const changeRequestData = data => ({
+export const changeRequestData = data => ({
   type: CHANGE_REQUEST_DATA,
   value: data
 });
