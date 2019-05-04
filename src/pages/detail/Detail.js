@@ -15,7 +15,8 @@ import {
   collect,
   getThumbsupAndStarNum,
   getDetailInfo,
-  changeLoadingStatus
+  changeLoadingStatus,
+  handleViewArticle
 } from './store/actionCreators';
 
 class Detail extends Component {
@@ -123,10 +124,12 @@ class Detail extends Component {
       navigation: {state: {params: { id: report_id}}},
       user_id,
       getDeatil,
-      getThumbsupAndStar
+      getThumbsupAndStar,
+      viewArticle
     } = this.props;
     getDeatil(report_id);
     getThumbsupAndStar(report_id, user_id);
+    viewArticle(report_id, user_id);
   }
 
   componentWillUnmount () {
@@ -174,6 +177,11 @@ const mapDispatch = dispatch => ({
       navigation.navigate('Login');
     } else {
       dispatch(collect(user_id, report_id));
+    }
+  },
+  viewArticle (report_id, user_id) {
+    if (user_id) {
+      dispatch(handleViewArticle(report_id, user_id));
     }
   }
 });

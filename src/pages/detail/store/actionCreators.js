@@ -9,7 +9,8 @@ import {
   toogleThumbsUp,
   thumbsupAndStar,
   toogleCollection,
-  detail
+  detail,
+  updateView
 } from '../../../api';
 
 const changeThumbsUpState = () => ({
@@ -97,5 +98,22 @@ export const getThumbsupAndStarNum = (report_id, user_id) => async dispatch => {
         collected
       )
     )
+  }
+};
+
+export const handleViewArticle = (report_id, user_id) => async (dispatch) => {
+  const { method, url } = updateView;
+  const { _bodyText } = await fetch(url, {
+    method,
+    headers: {
+      "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
+    },
+    body: `user_id=${user_id}&report_id=${report_id}`
+  });
+
+  const { success } = JSON.parse(_bodyText);
+  console.log(success);
+  if (success) {
+    console.log('成功更新用户查看该文章的时间...');
   }
 };

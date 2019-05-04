@@ -15,6 +15,12 @@ const detail = {
   desc: '获取详情页信息'
 }
 
+const updateView = {
+  method: 'post',
+  url: baseURL + '/updateView',
+  desc: '更新用户查看该文章的时间'
+}
+
 const login = {
   method: 'post',
   url: baseURL + '/login',
@@ -93,6 +99,6 @@ export {
   getThumbsUpList,
   getCollectionList,
   getViewsList,
-  search
+  search,
+  updateView
 }
-

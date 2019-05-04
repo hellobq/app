@@ -3,7 +3,6 @@ import { Image, StyleSheet } from 'react-native'
 import TabNavigator from 'react-native-tab-navigator'
 import Home from '../pages/home/Home'
 import My from '../pages/my/My'
-import Demo from '../pages/demo/Demo'
 
 class MainTabNavigator extends Component {
 
@@ -18,11 +17,6 @@ class MainTabNavigator extends Component {
       icon: require("../assets/images/i_mine.png"),
       selectedIcon: require("../assets/images/i_mine_foc.png"),
       Component: My
-    }, {
-      tabTitle: 'demo',
-      icon: require("../assets/images/i_mine.png"),
-      selectedIcon: require("../assets/images/i_mine_foc.png"),
-      Component: Demo
     }],
     selectedTabTitle: '首页'
   }
