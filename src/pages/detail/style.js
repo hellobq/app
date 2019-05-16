@@ -54,5 +54,37 @@ export default StyleSheet.create({
   },
   iconText: {
     marginLeft: 6
+  },
+  recommend: {
+    
+  },
+  recommendText: {
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 18,
+    color: '#333',
+    textAlign: 'center'
+  },
+  recommendBox: {
+    marginBottom: 10,
+    height: 100,
+    padding: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
+    borderRadius: 4
+  },
+  title: {
+    marginRight: 10,
+    flex: 1,
+    fontSize: 16,
+    lineHeight: 24,
+    fontWeight: "500",
+    color: '#444'
+  },
+  renderImg: {
+    width: 100,
+    height: 100
   }
 });

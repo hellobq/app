@@ -1,5 +1,5 @@
 const 
-  ip_goal = '192.168.199.166',
+  ip_goal = '172.17.112.34', // 192.168.199.166
   port = '4321',
   baseURL = `http://${ip_goal}:${port}/api`;
 
@@ -13,6 +13,12 @@ const detail = {
   method: 'get',
   url: baseURL + '/detail',
   desc: '获取详情页信息'
+}
+
+const recommend = {
+  method: 'recommend',
+  url: baseURL + '/recommend',
+  desc: '获取推荐文章列表'
 }
 
 const updateView = {
@@ -100,5 +106,6 @@ export {
   getCollectionList,
   getViewsList,
   search,
-  updateView
+  updateView,
+  recommend
 }

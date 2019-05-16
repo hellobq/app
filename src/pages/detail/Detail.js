@@ -16,13 +16,14 @@ import {
   getThumbsupAndStarNum,
   getDetailInfo,
   changeLoadingStatus,
-  handleViewArticle
+  handleViewArticle,
+  handleRecommendReq
 } from './store/actionCreators';
 
 class Detail extends Component {
 
   render () {
-    const { thumbsUpNum, collections, thumbsUpState, collectionState, detailInfo, loading } = this.props
+    const { thumbsUpNum, collections, thumbsUpState, collectionState, detailInfo, loading, recommendData } = this.props
     const { id, title, content, img_urls } = detailInfo.toJS();
 
     return (
@@ -73,6 +74,28 @@ class Detail extends Component {
                     </View>
                   ))
                 }
+              </View>
+
+              <View style={styles.recommend}>
+                <Text style={styles.recommendText}>看了又看</Text>
+                {
+                  recommendData.map(({_id, title, image}) => (
+                    <TouchableOpacity
+                      key={_id}
+                      activeOpacity={0.9}
+                      onPress={() => this.props.pressRecommendItem(_id)}
+                      style={styles.recommendBox}
+                    >
+                      <Text style={styles.title}>{title}</Text>
+                      <Image
+                        style={styles.renderImg}
+                        source={{uri: image}}
+                        resizeMode='contain'
+                      />
+                    </TouchableOpacity>
+                  ))
+                }
+                
               </View>
             </ScrollView>
 
@@ -125,11 +148,13 @@ class Detail extends Component {
       user_id,
       getDeatil,
       getThumbsupAndStar,
-      viewArticle
+      viewArticle,
+      handleRecommend
     } = this.props;
     getDeatil(report_id);
     getThumbsupAndStar(report_id, user_id);
     viewArticle(report_id, user_id);
+    handleRecommend(report_id);
   }
 
   componentWillUnmount () {
@@ -145,13 +170,22 @@ const mapState = state => ({
   thumbsUpState: state.getIn(['detail', 'thumbsUpState']),
   collections: state.getIn(['detail', 'collections']),
   collectionState: state.getIn(['detail', 'collectionState']),
-  inputText: state.getIn(['detail', 'inputText']),
-  showInput: state.getIn(['detail', 'showInput']),
   detailInfo: state.getIn(['detail', 'detailInfo']),
-  loading: state.getIn(['detail', 'loading'])
+  loading: state.getIn(['detail', 'loading']),
+  recommendData: state.getIn(['detail', 'recommendData']).toJS()
 });
 
 const mapDispatch = dispatch => ({
+  pressRecommendItem (id) {
+    const { navigation } = this;
+    navigation.replace('Detail', {
+      id: id + ''
+    });
+    console.log('点击可....', navigation)
+  },
+  handleRecommend (report_id) {
+    dispatch(handleRecommendReq(report_id));
+  },
   handleWillUnmount () {
     dispatch(changeLoadingStatus(true));
   },

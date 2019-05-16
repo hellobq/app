@@ -3,15 +3,32 @@ import {
   CHANGE_THUMBSUP_STATE,
   CHNAGE_COLLECT_STATE,
   CHANGE_DATEIL_INFO,
-  CHANGE_LOADING_STATUS
+  CHANGE_LOADING_STATUS,
+  CHANGE_RECOMMEND_DATA
 } from './actionTypes';
 import {
   toogleThumbsUp,
   thumbsupAndStar,
   toogleCollection,
   detail,
-  updateView
+  updateView,
+  recommend
 } from '../../../api';
+
+const changeRecommendData = (data) => ({
+  type: CHANGE_RECOMMEND_DATA,
+  value: data
+});
+
+export const handleRecommendReq = report_id => async dispatch => {
+  const { url } = recommend;
+  const { _bodyText } = await fetch(`${url}?report_id=${report_id}`);
+  const { success, data } = JSON.parse(_bodyText);
+  console.log('data..........', data);
+  if (success) {
+    dispatch(changeRecommendData(data))
+  }
+};
 
 const changeThumbsUpState = () => ({
   type: CHANGE_THUMBSUP_STATE

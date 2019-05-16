@@ -4,12 +4,14 @@ import {
   CHANGE_THUMBSUP_STATE,
   CHNAGE_COLLECT_STATE,
   CHANGE_DATEIL_INFO,
-  CHANGE_LOADING_STATUS
+  CHANGE_LOADING_STATUS,
+  CHANGE_RECOMMEND_DATA
 } from './actionTypes';
 
 const defaultState = fromJS({
   loading: true,
   detailInfo: {},
+  recommendData: [],
   thumbsUpNum: 0,
   thumbsUpState: false,
   collections: 0,
@@ -18,6 +20,9 @@ const defaultState = fromJS({
 
 export default (state = defaultState, action) => {
   switch (action.type) {
+    case CHANGE_RECOMMEND_DATA:
+      return state.set('recommendData', fromJS(action.value));
+
     case CHANGE_LOADING_STATUS:
       return state.set('loading', action.value);
 
