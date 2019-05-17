@@ -2,13 +2,42 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ReportSchema = new Schema({
-  type: String,
-  image: String,
-  href: String,
-  title: String,
-  description: String,
-  content: String,
-  date: String
+  type: {
+    type: String,
+    default: 'daily-report',
+    required: true
+  },
+  title: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  image: {
+    type: String,
+    default: ''
+  },
+  originHref: {
+    type: String,
+    default: '',
+    unique: true
+  },
+  content: {
+    type: String,
+    default: ''
+  },
+  date: String,
+  viewNum: {
+    type: Number,
+    default: 0
+  },
+  keywords: {
+    type: String,
+    default: ''
+  }
 }, {
   collection: 'reports',
   versionKey: false
@@ -28,13 +57,10 @@ const UserSchema = new Schema({
   collections: [{
     type: Schema.Types.ObjectId,
     ref: 'Collection'
-  }], 
+  }],
   views: [{
-    report_id: {
-      type: Schema.Types.ObjectId,
-      ref: 'Report'
-    },
-    view_date: Date
+    type: Schema.Types.ObjectId,
+    ref: 'View'
   }],
   thumbs_ups: [{
     type: Schema.Types.ObjectId,
@@ -42,6 +68,21 @@ const UserSchema = new Schema({
   }]
 }, {
   collection: 'users',
+  versionKey: false
+});
+
+const ViewSchema = new Schema({
+  date: Date,
+  viewer: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  report: {
+    type: Schema.Types.ObjectId,
+    ref: 'Report'
+  }
+}, {
+  collection: 'views',
   versionKey: false
 });
 
@@ -66,7 +107,10 @@ const CommentSchema = new Schema({
 });
 
 const ThumbsUpSchema = new Schema({
-  date: Date,
+  date: {
+    type: Date,
+    default: new Date()
+  },
   thumbsUper: {
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -81,7 +125,10 @@ const ThumbsUpSchema = new Schema({
 });
 
 const CollectionSchema = new Schema({
-  date: Date,
+  date: {
+    type: Date,
+    default: new Date()
+  },
   collector: {
     type: Schema.Types.ObjectId,
     ref: 'User'
@@ -95,10 +142,46 @@ const CollectionSchema = new Schema({
   versionKey: false
 });
 
+const DemoReportSchema = new Schema({
+  type: {
+    type: String,
+    default: 'daily-report',
+    required: true
+  },
+  title: {
+    type: String,
+    unique: true,
+    required: true
+  },
+  description: {
+    type: String,
+    default: ''
+  },
+  image: {
+    type: String,
+    default: ''
+  },
+  originHref: {
+    type: String,
+    default: '',
+    unique: true
+  },
+  content: {
+    type: String,
+    default: ''
+  },
+  date: String
+}, {
+  collection: 'demoReports',
+  versionKey: false
+});
+
 module.exports = {
   Report: mongoose.model('Report', ReportSchema),
   User: mongoose.model('User', UserSchema),
   Comment: mongoose.model('Comment', CommentSchema),
   ThumbsUp: mongoose.model('ThumbsUp', ThumbsUpSchema),
-  Collection: mongoose.model('Collection', CollectionSchema)
+  Collection: mongoose.model('Collection', CollectionSchema),
+  View: mongoose.model('View', ViewSchema),
+  DemoReport: mongoose.model('DemoReport', DemoReportSchema)
 };

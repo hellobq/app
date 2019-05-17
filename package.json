@@ -1,19 +1,32 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "start": "node src/spider/index.js",
-    "dev": "node src/server.js",
-    "test": "node test.js"
+    "demo": "node src/spider/test.js",
+    "dev": "node src/index.js",
+    "hotReport": "node src/spider/hotReport.js",
+    "dailyReport": "node src/spider/dailyReport.js",
+    "hotComment": "node src/spider/hotComment.js",
+    "yanjiu": "node src/spider/yanjiu.js",
+    "api-test": "mocha test/api/index.test.js --timeout 10000  --slow 500",
+    "unit-test": "mocha test/unit/index.test.js --timeout 10000  --slow 500",
+    "get-coverage": "istanbul cover _mocha",
+    "util": "node src/util/index.js"
   },
   "dependencies": {
+    "chai": "^4.2.0",
     "cheerio": "^1.0.0-rc.2",
+    "istanbul": "^0.4.5",
     "koa": "^2.6.1",
     "koa-bodyparser": "^4.2.1",
     "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "mocha": "^6.1.4",
     "mongoose": "^5.3.9",
-    "superagent": "^4.0.0-beta.5"
+    "request": "^2.88.0",
+    "superagent": "^4.0.0-beta.5",
+    "supertest": "^4.0.2"
   }
 }

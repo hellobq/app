@@ -1,5 +1,4 @@
 const { Comment, User, Report } = require('../db/Schema');
-const handleErr = require('./handleErr');
 
 // 用户评论
 const comment = async (ctx, next) => {
