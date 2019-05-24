@@ -5,12 +5,15 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
-  Image
+  Image,
+  RefreshControl
 } from 'react-native';
 import { connect } from 'react-redux';
 import {
   requestData,
-  changeLoadingStatus
+  changeLoadingStatus,
+  changePage,
+  changeRefreshingStatus
 } from './store/actionCreators';
 import styles from './style';
 
@@ -21,10 +24,11 @@ class AboutMe extends Component {
   })
 
   componentDidMount () {
-    const { status, navigation, handleComponentMount, page, num } = this.props;
+    const { status, navigation, handleComponentMount, page, num, resetPage } = this.props;
     const { id, title } = navigation.state.params;
     console.log('mount', id, title);
     if (id) {
+      resetPage();
       handleComponentMount(id, title, page, num);
     }
   }
@@ -35,18 +39,34 @@ class AboutMe extends Component {
   }
 
   render () {
-    const { status, navigation, list } = this.props;
+    let { status, navigation, list, refreshing } = this.props;
+    list = list.toJS();
     const { id, title } = navigation.state.params;
+
+    const judgeList = () => list.length > 0 ? 
+      <FlatList
+        data={list}
+        keyExtractor={({_id}) => _id}
+        renderItem={this._renderItem}
+        ListFooterComponent={this._listFootComponent}
+        ItemSeparatorComponent={this._separatorComponent}
+        onEndReached={this.handleEndReached}
+        onEndReachedThreshold={.02}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => this.props.handleRefresh()}
+            colors={['#d81e06']}
+          />
+        }
+      />
+    :
+      <View style={styles.noLoginBox}>
+        <Text style={styles.noLoginText}>空空如也...</Text>
+      </View>;
+
     const hasGetList = () => status
-      ? <FlatList
-          data={list}
-          keyExtractor={({_id}) => _id}
-          renderItem={this._renderItem}
-          ListFooterComponent={this._listFootComponent}
-          ItemSeparatorComponent={this._separatorComponent}
-          onEndReached={this.handleEndReached}
-          onEndReachedThreshold={.02}
-        />
+      ? judgeList()
       : <View style={styles.statusBox}>
           <ActivityIndicator
             size="large"
@@ -128,12 +148,15 @@ const mapState = state => ({
   list: state.getIn(['aboutMe', 'list']),
   page: state.getIn(['aboutMe', 'page']),
   num: state.getIn(['aboutMe', 'num']),
-  hasCompleted: state.getIn(['aboutMe', 'hasCompleted'])
+  hasCompleted: state.getIn(['aboutMe', 'hasCompleted']),
+  refreshing: state.getIn(['aboutMe', 'refreshing'])
 });
 
 const mapDispatch = dispatch => ({
+  resetPage () {
+    dispatch(changePage(1));
+  },
   handleComponentMount (id, title, page, num) {
-    console.log('handleMount', id, title);
     dispatch(requestData(id, title, page, num));
   },
   handleWillUnmount () {
@@ -144,6 +167,13 @@ const mapDispatch = dispatch => ({
     navigation.navigate('Detail', {
       id: id + ''
     })
+  },
+  handleRefresh () {
+    dispatch(changeRefreshingStatus(true));
+
+    const { navigation, num } = this;
+    const { id, title } = navigation.state.params;
+    dispatch(requestData(id, title, 1, num, true));
   }
 });
 
