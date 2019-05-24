@@ -24,7 +24,7 @@ class Detail extends Component {
 
   render () {
     const { thumbsUpNum, collections, thumbsUpState, collectionState, detailInfo, loading, recommendData } = this.props
-    const { id, title, content, img_urls } = detailInfo.toJS();
+    const { title, content } = detailInfo.toJS();
 
     return (
       <View style={styles.containerBox}>
