@@ -3,6 +3,7 @@ const timeFormatTest = require('./timeFormat.test');
 const getTypeTest = require('./getType.test.js');
 const handleErrorTest = require('./handleError.test.js');
 const sleepTest = require('./sleep.test');
+const randomCode = require('./randomCode.test');
 const expect = chai.expect;
 
 describe('Unit test: ', () => {
@@ -10,4 +11,5 @@ describe('Unit test: ', () => {
   describe('getTypeTest function: ', getTypeTest(expect));
   describe('handleErrorTest function: ', handleErrorTest(expect));
   describe('sleepTest function: ', sleepTest(expect));
+  describe('randomCode function: ', randomCode(expect));
 });

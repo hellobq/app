@@ -8,6 +8,7 @@ const { getThumbsUpList, toogleThumbsUp } = require('../manager/thumbsUp');
 const getThumbsupAndStar = require('../manager/getThumbsupAndStar');
 const search = require('../manager/search');
 const recommend = require('../manager/recommend');
+const verification = require('../manager/verification');
 
 const routers = router
   .prefix('/api')
@@ -27,5 +28,6 @@ const routers = router
   .post('/comment', comment)
   .get('/getComments', getComments)
   .get('/recommend', recommend)
+  .get('/getVerification', verification);
 
 module.exports = routers;

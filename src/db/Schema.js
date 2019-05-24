@@ -176,6 +176,16 @@ const DemoReportSchema = new Schema({
   versionKey: false
 });
 
+const verification = new Schema({
+  code: {
+    type: String,
+    required: true
+  }
+}, {
+  collection: 'verifications',
+  versionKey: false
+});
+
 module.exports = {
   Report: mongoose.model('Report', ReportSchema),
   User: mongoose.model('User', UserSchema),
@@ -183,5 +193,6 @@ module.exports = {
   ThumbsUp: mongoose.model('ThumbsUp', ThumbsUpSchema),
   Collection: mongoose.model('Collection', CollectionSchema),
   View: mongoose.model('View', ViewSchema),
-  DemoReport: mongoose.model('DemoReport', DemoReportSchema)
+  DemoReport: mongoose.model('DemoReport', DemoReportSchema),
+  Verification: mongoose.model('Verification', verification)
 };
