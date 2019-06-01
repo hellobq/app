@@ -88,14 +88,14 @@ const getDetail = async (ctx, next) => {
   const { report_id, user_id } = ctx.query;
   console.log('获取详情数据', report_id, user_id);
   const { title, content: contentStr, date } = await Report.findById(report_id);
-  const { thumbsUps, collections, thumbsUped, collected } = await getThumbsupAndStar(report_id, user_id);
   const content = handleContent(contentStr);
   ctx.body = {
     success: true,
     data: {
       id: report_id,
-      title, content, date,
-      thumbsUps, collections, thumbsUped, collected
+      title,
+      content,
+      date
     }
   };
 }
